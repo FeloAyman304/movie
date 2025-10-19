@@ -1,0 +1,41 @@
+﻿
+
+@model IEnumerable<movie_hospital_1.dataModel.Actor>
+
+<h2>🎭 Actors List</h2>
+<a asp-action="Create" class="btn btn-primary mb-3">➕ Add Actor</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Bio</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var actor in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(actor.ProfilePicture))
+                    {
+                        <img src="@actor.ProfilePicture" alt="@actor.Name" width="80" height="80" class="rounded shadow" />
+                    }
+                    else
+                    {
+                        <span>No Image</span>
+                    }
+                </td>
+                <td>@actor.Name</td>
+                <td>@actor.Bio</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@actor.Id" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@actor.Id" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

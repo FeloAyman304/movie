@@ -1,0 +1,32 @@
+﻿
+
+@model movie_hospital_1.dataModel.Actor
+
+<h2>✏ Edit Actor</h2>
+
+<form asp-action="Edit" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Bio</label>
+        <textarea asp-for="Bio" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Profile Picture</label><br />
+        @if (!string.IsNullOrEmpty(Model.ProfilePicture))
+        {
+            <img src="@Model.ProfilePicture" alt="@Model.Name" width="100" height="100" class="rounded shadow mb-2" />
+        }
+        <input type="file" name="ProfileImage" class="form-control" accept="image/*" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Update</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>

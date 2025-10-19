@@ -1,0 +1,44 @@
+﻿
+
+
+@model movie_hospital_1.dataModel.Cinema
+
+<h2 class="mb-4 text-center">✏️ Edit Cinema</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Cinema Name</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="Location"></label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+
+
+    <div class="mb-3">
+        <label class="form-label">Current Image</label><br />
+        @if (!string.IsNullOrEmpty(Model.ImageURL))
+        {
+            <img src="@Model.ImageURL" class="imgCinema mb-2" alt="Cinema Image" />
+        }
+        else
+        {
+            <span class="text-muted">No image uploaded</span>
+        }
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Upload New Image</label>
+        <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Update</button>
+    <a asp-action="Index" class="btn btn-secondary">⬅ Back</a>
+</form>
+

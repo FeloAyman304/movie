@@ -1,0 +1,72 @@
+﻿@model movie_hospital_1.dataModel.Movie
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Add New Movie";
+}
+
+<h2 class="mb-4 text-center">🎬 Add New Movie</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">Title</label>
+        <input asp-for="Title" class="form-control" placeholder="Enter movie title" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Description</label>
+        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter movie description"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Poster Image</label>
+        <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+        <small class="text-muted">Upload a movie poster (jpg, png...)</small>
+    </div>
+
+
+    <div class="mb-3">
+        <label class="form-label">Category</label>
+        <select asp-for="CategoryId" class="form-select" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
+            <option value="">-- Select Category --</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Cinema</label>
+        <select asp-for="CinemaId" class="form-select" asp-items="@(new SelectList(ViewBag.Cinemas, "Id", "Name"))">
+            <option value="">-- Select Cinema --</option>
+        </select>
+        <span asp-validation-for="CinemaId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Actors</label>
+        <select name="selectedActors" class="form-select" multiple size="5"
+                asp-items="@(new SelectList(ViewBag.Actors, "Id", "Name"))">
+        </select>
+    </div>
+
+
+    <div class="mb-3">
+        <label class="form-label">Status</label>
+        <div class="form-check">
+            <input asp-for="InCinema" class="form-check-input" type="checkbox" />
+            <label class="form-check-label" for="InCinema">Active (Showing in Cinema)</label>
+        </div>
+    </div>
+ 
+    </div>
+
+
+    <button type="submit" class="btn btn-success">💾 Save</button>
+    <a asp-action="Index" class="btn btn-secondary">⬅ Back to List</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

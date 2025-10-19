@@ -1,0 +1,86 @@
+﻿@model movie_hospital_1.dataModel.Movie
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Edit Movie";
+}
+
+<h2 class="mb-4 text-center">✏ Edit Movie</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">Title</label>
+        <input asp-for="Title" class="form-control" placeholder="Enter movie title" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Description</label>
+        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter movie description"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Current Poster</label><br />
+        @if (!string.IsNullOrEmpty(Model.ImageURL))
+        {
+            <img src="@Model.ImageURL" alt="Movie Poster" width="150" class="rounded shadow-sm" />
+        }
+        else
+        {
+            <p class="text-muted">No image uploaded</p>
+        }
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Upload New Poster (optional)</label>
+        <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+        <small class="text-muted">Upload a new movie poster (jpg, png...)</small>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Category</label>
+        <select asp-for="CategoryId" class="form-select"
+                asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name", Model.CategoryId))">
+            <option value="">-- Select Category --</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Cinema</label>
+        <select asp-for="CinemaId" class="form-select"
+                asp-items="@(new SelectList(ViewBag.Cinemas, "Id", "Name", Model.CinemaId))">
+            <option value="">-- Select Cinema --</option>
+        </select>
+        <span asp-validation-for="CinemaId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Actors</label>
+        <select name="selectedActors" class="form-select" multiple size="5">
+            @foreach (var actor in ViewBag.Actors as List<movie_hospital_1.dataModel.Actor>)
+            {
+                var isSelected = Model.MovieActors?.Any(ma => ma.ActorId == actor.Id) ?? false;
+                <option value="@actor.Id" selected="@(isSelected ? "selected" : null)">
+                    @actor.Name
+                </option>
+            }
+        </select>
+        <small class="text-muted">Hold Ctrl (or Cmd) to select multiple actors.</small>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Status</label>
+        <div class="form-check">
+            <input asp-for="InCinema" class="form-check-input" type="checkbox" />
+            <label class="form-check-label" for="InCinema">Active (Showing in Cinema)</label>
+        </div>
+    <button type="submit" class="btn btn-success">💾 Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">⬅ Back to List</a>
+</form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

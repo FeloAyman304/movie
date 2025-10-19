@@ -1,0 +1,76 @@
+﻿
+
+
+
+
+@model IEnumerable<movie_hospital_1.dataModel.Movie>
+
+<h2>🎬 Movies List</h2>
+<a asp-action="Create" class="btn btn-primary mb-3">➕ Add Movie</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Cinema</th>
+            <th>Image</th>
+            <th>Actors</th>
+            <th>Status</th> 
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Category?.Name</td>
+                <td>@item.Cinema?.Name</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImageURL))
+                    {
+                        <img src="@item.ImageURL" width="80" class="rounded shadow-sm" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">No Image</span>
+                    }
+                </td>
+
+                <td>
+                    @if (item.MovieActors != null && item.MovieActors.Any())
+                    {
+                        foreach (var ma in item.MovieActors)
+                        {
+                            @ma.Actor?.Name
+                
+                            <br />
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">No Actors</span>
+                    }
+                </td>
+
+                <td>
+                    @if (item.InCinema)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Not Active</span>
+                    }
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">✏ Edit</a>
+        
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">🗑 Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
