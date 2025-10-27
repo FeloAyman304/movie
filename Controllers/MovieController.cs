@@ -2,38 +2,59 @@
 using Microsoft.EntityFrameworkCore;
 using movie_hospital_1.dataAccess;
 using movie_hospital_1.dataModel;
+using movie_hospital_1.Reposotories;
+using System.Linq.Expressions;
 
 namespace movie_hospital_1.Controllers
 {
     public class MovieController : Controller
     {
-        private readonly ApplicationDbContext _context = new();
-
-        public IActionResult Index()
+        Repossitory<Movie> _MovieRepository = new(); 
+        Repossitory<Category> _CategoryRepository = new();
+        Repossitory<Cinema> _CinemaRepository = new();
+        Repossitory<Actor> _ActorRepository = new();
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var movies = _context.Movies
-                .Include(e => e.Category)
-                .Include(e => e.Cinema)
-                .Include(e => e.MovieActors)
-                    .ThenInclude(e => e.Actor)
-                .ToList();
+    
+            var movies = await _MovieRepository.GetAsync(
+                includes: new Expression<Func<Movie, object>>[]
+                {
+            m => m.Category,
+            m => m.Cinema,
+            m => m.MovieActors 
+                },
+                cancellationToken: cancellationToken
+            );
+
+            foreach (var movie in movies)
+            {
+                if (movie.MovieActors != null && movie.MovieActors.Any())
+                {
+                    foreach (var ma in movie.MovieActors)
+                    {
+                        
+                        ma.Actor = await _ActorRepository.GetOne(a => a.Id == ma.ActorId, cancellationToken: cancellationToken);
+                    }
+                }
+            }
 
             return View(movies);
         }
-
-        public IActionResult Create()
+        public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
-            ViewBag.Categories = _context.Categories.ToList();
-            ViewBag.Cinemas = _context.Cinemas.ToList();
-            ViewBag.Actors = _context.Actors.ToList();
+            ViewBag.Categories = await _CategoryRepository.GetAsync(cancellationToken: cancellationToken);
+            ViewBag.Cinemas = await _CinemaRepository.GetAsync(cancellationToken: cancellationToken);
+            ViewBag.Actors = await _ActorRepository.GetAsync(cancellationToken: cancellationToken);
             return View();
         }
 
+
         [HttpPost]
-        public IActionResult Create(Movie movie, IFormFile ImageFile, List<int> selectedActors)
+        public async Task<IActionResult> Create(Movie movie, IFormFile ImageFile, List<int> selectedActors, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
+              
                 if (ImageFile != null && ImageFile.Length > 0)
                 {
                     var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
@@ -45,12 +66,13 @@ namespace movie_hospital_1.Controllers
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        ImageFile.CopyTo(stream);
+                        await ImageFile.CopyToAsync(stream);
                     }
 
                     movie.ImageURL = "/images/" + uniqueFileName;
                 }
 
+                // ربط الممثلين بالفيلم
                 if (selectedActors != null && selectedActors.Count > 0)
                 {
                     movie.MovieActors = selectedActors.Select(aid => new MovieActor
@@ -59,95 +81,123 @@ namespace movie_hospital_1.Controllers
                     }).ToList();
                 }
 
-                _context.Movies.Add(movie);
-                _context.SaveChanges();
+                await _MovieRepository.Add(movie, cancellationToken);
+                await _MovieRepository.Commit(cancellationToken);
+
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Categories = _context.Categories.ToList();
-            ViewBag.Cinemas = _context.Cinemas.ToList();
-            ViewBag.Actors = _context.Actors.ToList();
+            ViewBag.Categories = await _CategoryRepository.GetAsync(cancellationToken: cancellationToken);
+            ViewBag.Cinemas = await _CinemaRepository.GetAsync(cancellationToken: cancellationToken);
+            ViewBag.Actors = await _ActorRepository.GetAsync(cancellationToken: cancellationToken);
             return View(movie);
         }
-
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var movie = _context.Movies.Find(id);
-            if (movie == null) return NotFound();
+            var cinema = await _MovieRepository.GetOne(e => e.Id == id, cancellationToken: cancellationToken);
+            if (cinema == null)
+                return NotFound();
 
-            _context.Movies.Remove(movie);
-            _context.SaveChanges();
+            _MovieRepository.Delete(cinema, cancellationToken);
+            await _MovieRepository.Commit(cancellationToken);
+
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var movie = _context.Movies
-                .Include(e => e.MovieActors)
-                .ThenInclude(e => e.Actor)
-                .FirstOrDefault(e => e.Id == id);
+            // جلب الفيلم مع MovieActors فقط
+            var movie = await _MovieRepository.GetOne(
+                e => e.Id == id,
+                includes: new Expression<Func<Movie, object>>[] { e => e.MovieActors },
+                cancellationToken: cancellationToken
+            );
 
-            if (movie == null) return NotFound();
+            if (movie == null)
+                return NotFound();
 
-            ViewBag.Categories = _context.Categories.ToList();
-            ViewBag.Cinemas = _context.Cinemas.ToList();
-            ViewBag.Actors = _context.Actors.ToList();
+            // جلب كل الـActors المرتبطين لكل MovieActor
+            if (movie.MovieActors != null && movie.MovieActors.Any())
+            {
+                foreach (var ma in movie.MovieActors)
+                {
+                    if (ma != null)
+                        ma.Actor = await _ActorRepository.GetOne(a => a.Id == ma.ActorId, cancellationToken: cancellationToken);
+                }
+            }
+
+            // جلب القوائم المنسدلة
+            ViewBag.Categories = await _CategoryRepository.GetAsync(cancellationToken: cancellationToken);
+            ViewBag.Cinemas = await _CinemaRepository.GetAsync(cancellationToken: cancellationToken);
+            ViewBag.Actors = await _ActorRepository.GetAsync(cancellationToken: cancellationToken);
 
             return View(movie);
         }
 
+        // ----------------- EDIT POST -----------------
         [HttpPost]
-        public IActionResult Edit(Movie movie, IFormFile ImageFile, List<int> selectedActors)
+        public async Task<IActionResult> Edit(Movie movie, IFormFile ImageFile, List<int> selectedActors, CancellationToken cancellationToken)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var existingMovie = _context.Movies
-                    .Include(m => m.MovieActors)
-                    .FirstOrDefault(m => m.Id == movie.Id);
+                ViewBag.Categories = await _CategoryRepository.GetAsync(cancellationToken: cancellationToken);
+                ViewBag.Cinemas = await _CinemaRepository.GetAsync(cancellationToken: cancellationToken);
+                ViewBag.Actors = await _ActorRepository.GetAsync(cancellationToken: cancellationToken);
+                return View(movie);
+            }
 
-                if (existingMovie == null) return NotFound();
+            // جلب الفيلم الحالي مع MovieActors
+            var existingMovie = await _MovieRepository.GetOne(
+                e => e.Id == movie.Id,
+                includes: new Expression<Func<Movie, object>>[] { e => e.MovieActors },
+                cancellationToken: cancellationToken
+            );
 
-                existingMovie.Title = movie.Title;
-                existingMovie.Description = movie.Description;
-                existingMovie.CategoryId = movie.CategoryId;
-                existingMovie.CinemaId = movie.CinemaId;
+            if (existingMovie == null)
+                return NotFound();
 
-                if (ImageFile != null && ImageFile.Length > 0)
+            // تعديل البيانات الأساسية
+            existingMovie.Title = movie.Title;
+            existingMovie.Description = movie.Description;
+            existingMovie.CategoryId = movie.CategoryId;
+            existingMovie.CinemaId = movie.CinemaId;
+
+            // رفع الصورة الجديدة إذا موجودة
+            if (ImageFile != null && ImageFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var uniqueFileName = Guid.NewGuid() + Path.GetExtension(ImageFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await ImageFile.CopyToAsync(stream, cancellationToken);
+
+                existingMovie.ImageURL = "/images/" + uniqueFileName;
+            }
+
+            // تعديل الممثلين المرتبطين بطريقة صحيحة
+            existingMovie.MovieActors.Clear();
+
+            if (selectedActors != null && selectedActors.Count > 0)
+            {
+                foreach (var aid in selectedActors)
                 {
-                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
-                    if (!Directory.Exists(uploadsFolder))
-                        Directory.CreateDirectory(uploadsFolder);
-
-                    var uniqueFileName = Guid.NewGuid() + Path.GetExtension(ImageFile.FileName);
-                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        ImageFile.CopyTo(stream);
-                    }
-
-                    existingMovie.ImageURL = "/images/" + uniqueFileName;
-                }
-
-                // ✅ تحديث الممثلين
-                existingMovie.MovieActors.Clear();
-                if (selectedActors != null && selectedActors.Count > 0)
-                {
-                    existingMovie.MovieActors = selectedActors.Select(aid => new MovieActor
+                    existingMovie.MovieActors.Add(new MovieActor
                     {
                         MovieId = existingMovie.Id,
                         ActorId = aid
-                    }).ToList();
+                    });
                 }
-
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Categories = _context.Categories.ToList();
-            ViewBag.Cinemas = _context.Cinemas.ToList();
-            ViewBag.Actors = _context.Actors.ToList();
-            return View(movie);
+            await _MovieRepository.Commit(cancellationToken);
+
+            return RedirectToAction(nameof(Index));
         }
+
+
     }
 }

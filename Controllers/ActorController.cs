@@ -7,17 +7,19 @@
 using Microsoft.AspNetCore.Mvc;
 using movie_hospital_1.dataAccess;
 using movie_hospital_1.dataModel;
+using movie_hospital_1.Reposotories;
+using movie_hospital_1.Reposotories;
+
 
 namespace movie_hospital_1.Controllers
 {
     public class ActorController : Controller
     {
-        private readonly ApplicationDbContext _context = new();
-
-        public IActionResult Index()
+        Repossitory<Actor> _ActorRepossitory = new();
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var actors = _context.Actors.ToList();
-            return View(actors);
+            var categories = await _ActorRepossitory.GetAsync(cancellationToken: cancellationToken);
+            return View(categories.AsEnumerable());
         }
 
         [HttpGet]
@@ -27,7 +29,8 @@ namespace movie_hospital_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Actor actor, IFormFile ProfileImage)
+        [HttpPost]
+        public async Task<IActionResult> Create(Actor actor, IFormFile ProfileImage, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
@@ -42,14 +45,15 @@ namespace movie_hospital_1.Controllers
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        ProfileImage.CopyTo(stream);
+                        await ProfileImage.CopyToAsync(stream);
                     }
 
                     actor.ProfilePicture = "/images/actors/" + uniqueFileName;
                 }
 
-                _context.Actors.Add(actor);
-                _context.SaveChanges();
+                await _ActorRepossitory.Add(actor, cancellationToken);
+                await _ActorRepossitory.Commit(cancellationToken);
+
                 return RedirectToAction("Index");
             }
 
@@ -57,27 +61,27 @@ namespace movie_hospital_1.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var actor = _context.Actors.Find(id);
-            if (actor == null)
-                return NotFound();
-
-            return View(actor);
+            var actor = await _ActorRepossitory.GetOne(e => e.Id == id, cancellationToken: cancellationToken);
+            return actor == null ? NotFound() : View(actor);
         }
 
+
         [HttpPost]
-        public IActionResult Edit(Actor actor, IFormFile ProfileImage)
+        public async Task<IActionResult> Edit(Actor actor, IFormFile ProfileImage, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
-                var existingActor = _context.Actors.Find(actor.Id);
+                var existingActor = await _ActorRepossitory.GetOne(e => e.Id == actor.Id, cancellationToken: cancellationToken);
                 if (existingActor == null)
                     return NotFound();
+
 
                 existingActor.Name = actor.Name;
                 existingActor.Bio = actor.Bio;
 
+            
                 if (ProfileImage != null && ProfileImage.Length > 0)
                 {
                     var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/actors");
@@ -89,29 +93,34 @@ namespace movie_hospital_1.Controllers
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        ProfileImage.CopyTo(stream);
+                        await ProfileImage.CopyToAsync(stream);
                     }
 
                     existingActor.ProfilePicture = "/images/actors/" + uniqueFileName;
                 }
 
-                _context.SaveChanges();
+               
+                _ActorRepossitory.Update(existingActor);
+                await _ActorRepossitory.Commit(cancellationToken);
+
                 return RedirectToAction("Index");
             }
 
             return View(actor);
         }
 
-        [HttpGet]
-        public IActionResult Delete(int id)
-        {
-            var actor = _context.Actors.Find(id);
-            if (actor != null)
-            {
-                _context.Actors.Remove(actor);
-                _context.SaveChanges();
-            }
 
+        [HttpGet]
+
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        {
+            var category = await _ActorRepossitory.GetOne(e => e.Id == id, cancellationToken: cancellationToken);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            _ActorRepossitory.Delete(category, cancellationToken);
+            await _ActorRepossitory.Commit(cancellationToken);
             return RedirectToAction("Index");
         }
     }

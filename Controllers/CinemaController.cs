@@ -1,21 +1,18 @@
-﻿
-
-
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using movie_hospital_1.dataAccess;
 using movie_hospital_1.dataModel;
+using movie_hospital_1.Reposotories;
 
 namespace movie_hospital_1.Controllers
 {
     public class CinemaController : Controller
     {
-        private readonly ApplicationDbContext _context = new();
+        Repossitory<Cinema> _CinemaRepossitory = new();
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var cinemas = _context.Cinemas.ToList();
-            return View(cinemas);
+            var categories = await _CinemaRepossitory.GetAsync(cancellationToken: cancellationToken);
+            return View(categories.AsEnumerable());
         }
 
         public IActionResult Create()
@@ -24,7 +21,7 @@ namespace movie_hospital_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Cinema cinema, IFormFile ImageFile)
+        public IActionResult Create(Cinema cinema, IFormFile ImageFile,CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
@@ -46,32 +43,29 @@ namespace movie_hospital_1.Controllers
                     cinema.ImageURL = "/images/" + uniqueFileName;
                 }
 
-                _context.Cinemas.Add(cinema);
-                _context.SaveChanges();
+                _CinemaRepossitory.Add(cinema,cancellationToken);
+                _CinemaRepossitory.Commit(cancellationToken);
                 return RedirectToAction(nameof(Index));
             }
             return View(cinema);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var cinema = _context.Cinemas.Find(id);
-            if (cinema == null)
-                return NotFound();
-
-            return View(cinema);
+            var actor = await _CinemaRepossitory.GetOne(e => e.Id == id, cancellationToken: cancellationToken);
+            return actor == null ? NotFound() : View(actor);
         }
-
         [HttpPost]
-        public IActionResult Edit(Cinema cinema, IFormFile? ImageFile)
+        public async Task<IActionResult> Edit(Cinema cinema, IFormFile ImageFile, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
-                var existingCinema = _context.Cinemas.Find(cinema.Id);
-                if (existingCinema == null) return NotFound();
+                var existingCinema = await _CinemaRepossitory.GetOne(e => e.Id == cinema.Id, cancellationToken: cancellationToken);
+                if (existingCinema == null)
+                    return NotFound();
 
                 existingCinema.Name = cinema.Name;
-     
+
                 if (ImageFile != null && ImageFile.Length > 0)
                 {
                     var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
@@ -83,27 +77,30 @@ namespace movie_hospital_1.Controllers
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        ImageFile.CopyTo(stream);
+                        await ImageFile.CopyToAsync(stream);
                     }
 
                     existingCinema.ImageURL = "/images/" + uniqueFileName;
                 }
 
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                _CinemaRepossitory.Update(existingCinema);
+                await _CinemaRepossitory.Commit(cancellationToken);
+
+                return RedirectToAction("Index");
             }
             return View(cinema);
         }
 
         [HttpGet]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var cinema = _context.Cinemas.Find(id);
-            if (cinema != null)
-            {
-                _context.Cinemas.Remove(cinema);
-                _context.SaveChanges();
-            }
+            var cinema = await _CinemaRepossitory.GetOne(e => e.Id == id, cancellationToken: cancellationToken);
+            if (cinema == null)
+                return NotFound();
+
+            _CinemaRepossitory.Delete(cinema, cancellationToken);
+            await _CinemaRepossitory.Commit(cancellationToken);
+
             return RedirectToAction(nameof(Index));
         }
     }
