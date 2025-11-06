@@ -1,21 +1,88 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using movie_hospital_1.dataAccess;
+using movie_hospital_1.dataModel;
 using movie_hospital_1.Models;
+using movie_hospital_1.Reposotories;
+using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace movie_hospital_1.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ILogger<HomeController> _logger;
+        private readonly MovieRepository _MovieRepository;
+        private readonly CategoryRepository _CategoryRepository;
+        private readonly CinemaRepository _CinemaRepository;
+        private readonly ActorRepository _ActorRepository;
+
+        public HomeController(
+            ILogger<HomeController> logger,
+            MovieRepository movieRepository,
+            CategoryRepository categoryRepository,
+            CinemaRepository cinemaRepository,
+            ActorRepository actorRepository
+        )
         {
             _logger = logger;
+            _MovieRepository = movieRepository;
+            _CategoryRepository = categoryRepository;
+            _CinemaRepository = cinemaRepository;
+            _ActorRepository = actorRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            return View();
+            var movies = await _MovieRepository.GetAsync(
+                includes: new Expression<Func<Movie, object>>[]
+                {
+                    m => m.Category,
+                    m => m.Cinema,
+                    m => m.MovieActors
+                },
+                cancellationToken: cancellationToken
+            );
+
+            foreach (var movie in movies)
+            {
+                foreach (var ma in movie.MovieActors)
+                {
+                    ma.Actor = await _ActorRepository.GetOne(
+                        a => a.Id == ma.ActorId,
+                        cancellationToken: cancellationToken
+                    );
+                }
+            }
+
+            return View(movies);
+        }
+
+        public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
+        {
+            var movie = await _MovieRepository.GetOne(
+                e => e.Id == id,
+                includes: new Expression<Func<Movie, object>>[]
+                {
+                    e => e.Category,
+                    e => e.Cinema,
+                    e => e.MovieActors
+                },
+                cancellationToken: cancellationToken
+            );
+
+            if (movie == null)
+                return NotFound();
+
+            foreach (var ma in movie.MovieActors)
+            {
+                ma.Actor = await _ActorRepository.GetOne(
+                    a => a.Id == ma.ActorId,
+                    cancellationToken: cancellationToken
+                );
+            }
+
+            return View(movie);
         }
 
         public IActionResult Privacy()

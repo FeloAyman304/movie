@@ -1,23 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using movie_hospital_1.dataAccess;
 using movie_hospital_1.dataModel;
-using movie_hospital_1.Reposotories;
+using movie_hospital_1.Reposotories.IReposotories;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Linq;
 
 namespace movie_hospital_1.Controllers
 {
     public class CategoryController : Controller
     {
-        //private ApplicationDbContext _context = new();
-          Repossitory<Category> _categoryRepossitory = new();
+        private readonly IRepossitory<Category> _categoryRepository;
 
+        public CategoryController(IRepossitory<Category> categoryRepository)
+        {
+            _categoryRepository = categoryRepository;
+        }
+
+        // =================== INDEX ===================
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var categories = await _categoryRepossitory.GetAsync(cancellationToken: cancellationToken);
+            var categories = await _categoryRepository.GetAsync(cancellationToken: cancellationToken);
             return View(categories.AsEnumerable());
         }
+
+        // =================== CREATE ===================
         [HttpGet]
         public IActionResult Create()
         {
@@ -26,50 +32,59 @@ namespace movie_hospital_1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Category category,CancellationToken cancellationToken)
-        {
-            if (ModelState is not null)
-            {
-               await _categoryRepossitory.Add(category, cancellationToken);
-               await _categoryRepossitory.Commit(cancellationToken);
-                return RedirectToAction("Index");
-            }
-
-            return View(category);
-        }
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id ,CancellationToken cancellationToken)
-        {
-            var category = await _categoryRepossitory.GetOne(e => e.Id == id, cancellationToken: cancellationToken);
-            return category == null ? NotFound() : View(category);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Category category,CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(Category category, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
-             _categoryRepossitory.Update(category);
-                _categoryRepossitory.Commit(cancellationToken);
-                return RedirectToAction("Index");
+                await _categoryRepository.Add(category, cancellationToken);
+                await _categoryRepository.Commit(cancellationToken);
+                return RedirectToAction(nameof(Index));
             }
+
             return View(category);
         }
 
+        // =================== EDIT ===================
         [HttpGet]
-     
-
-        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var category = await _categoryRepossitory.GetOne(e => e.Id == id, cancellationToken: cancellationToken);
+            var category = await _categoryRepository.GetOne(e => e.Id == id, cancellationToken: cancellationToken);
             if (category == null)
             {
                 return NotFound();
             }
-            _categoryRepossitory.Delete(category, cancellationToken);
-            await _categoryRepossitory.Commit(cancellationToken);
-            return RedirectToAction("Index");
+
+            return View(category);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Category category, CancellationToken cancellationToken)
+        {
+            if (ModelState.IsValid)
+            {
+                _categoryRepository.Update(category);
+                await _categoryRepository.Commit(cancellationToken);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(category);
+        }
+
+        // =================== DELETE ===================
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        {
+            var category = await _categoryRepository.GetOne(e => e.Id == id, cancellationToken: cancellationToken);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            _categoryRepository.Delete(category, cancellationToken);
+            await _categoryRepository.Commit(cancellationToken);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

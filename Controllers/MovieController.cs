@@ -9,10 +9,25 @@ namespace movie_hospital_1.Controllers
 {
     public class MovieController : Controller
     {
-        Repossitory<Movie> _MovieRepository = new(); 
-        Repossitory<Category> _CategoryRepository = new();
-        Repossitory<Cinema> _CinemaRepository = new();
-        Repossitory<Actor> _ActorRepository = new();
+        private readonly ApplicationDbContext _context;
+        private readonly MovieRepository _MovieRepository;
+        private readonly CategoryRepository _CategoryRepository;
+        private readonly CinemaRepository _CinemaRepository;
+        private readonly ActorRepository _ActorRepository;
+
+        public MovieController(
+            ApplicationDbContext context,
+            MovieRepository movieRepository,
+            CategoryRepository categoryRepository,
+            CinemaRepository cinemaRepository,
+            ActorRepository actorRepository)
+        {
+            _context = context;
+            _MovieRepository = movieRepository;
+            _CategoryRepository = categoryRepository;
+            _CinemaRepository = cinemaRepository;
+            _ActorRepository = actorRepository;
+        }
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
     
@@ -72,7 +87,6 @@ namespace movie_hospital_1.Controllers
                     movie.ImageURL = "/images/" + uniqueFileName;
                 }
 
-                // ربط الممثلين بالفيلم
                 if (selectedActors != null && selectedActors.Count > 0)
                 {
                     movie.MovieActors = selectedActors.Select(aid => new MovieActor
@@ -106,7 +120,7 @@ namespace movie_hospital_1.Controllers
 
         public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            // جلب الفيلم مع MovieActors فقط
+    
             var movie = await _MovieRepository.GetOne(
                 e => e.Id == id,
                 includes: new Expression<Func<Movie, object>>[] { e => e.MovieActors },
@@ -116,7 +130,7 @@ namespace movie_hospital_1.Controllers
             if (movie == null)
                 return NotFound();
 
-            // جلب كل الـActors المرتبطين لكل MovieActor
+            
             if (movie.MovieActors != null && movie.MovieActors.Any())
             {
                 foreach (var ma in movie.MovieActors)
@@ -126,7 +140,7 @@ namespace movie_hospital_1.Controllers
                 }
             }
 
-            // جلب القوائم المنسدلة
+          
             ViewBag.Categories = await _CategoryRepository.GetAsync(cancellationToken: cancellationToken);
             ViewBag.Cinemas = await _CinemaRepository.GetAsync(cancellationToken: cancellationToken);
             ViewBag.Actors = await _ActorRepository.GetAsync(cancellationToken: cancellationToken);
@@ -134,7 +148,6 @@ namespace movie_hospital_1.Controllers
             return View(movie);
         }
 
-        // ----------------- EDIT POST -----------------
         [HttpPost]
         public async Task<IActionResult> Edit(Movie movie, IFormFile ImageFile, List<int> selectedActors, CancellationToken cancellationToken)
         {
@@ -146,7 +159,7 @@ namespace movie_hospital_1.Controllers
                 return View(movie);
             }
 
-            // جلب الفيلم الحالي مع MovieActors
+        
             var existingMovie = await _MovieRepository.GetOne(
                 e => e.Id == movie.Id,
                 includes: new Expression<Func<Movie, object>>[] { e => e.MovieActors },
@@ -156,13 +169,12 @@ namespace movie_hospital_1.Controllers
             if (existingMovie == null)
                 return NotFound();
 
-            // تعديل البيانات الأساسية
             existingMovie.Title = movie.Title;
             existingMovie.Description = movie.Description;
             existingMovie.CategoryId = movie.CategoryId;
             existingMovie.CinemaId = movie.CinemaId;
 
-            // رفع الصورة الجديدة إذا موجودة
+       
             if (ImageFile != null && ImageFile.Length > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
@@ -178,7 +190,6 @@ namespace movie_hospital_1.Controllers
                 existingMovie.ImageURL = "/images/" + uniqueFileName;
             }
 
-            // تعديل الممثلين المرتبطين بطريقة صحيحة
             existingMovie.MovieActors.Clear();
 
             if (selectedActors != null && selectedActors.Count > 0)

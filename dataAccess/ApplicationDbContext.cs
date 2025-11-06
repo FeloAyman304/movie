@@ -1,11 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using movie_hospital_1.dataModel;
 using System.Reflection.Emit;
-
 namespace movie_hospital_1.dataAccess
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext: IdentityDbContext<ApplicationUser>
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options)
+        {
+
+        }
+
+        public ApplicationDbContext()
+        {
+        }
+
         public DbSet<Category> Categories { get; set; }
         public DbSet<Cinema> Cinemas { get; set; }
         public DbSet<Movie> Movies { get; set; }
@@ -35,6 +44,7 @@ namespace movie_hospital_1.dataAccess
                 .WithMany(a => a.MovieActors)
                 .HasForeignKey(ma => ma.ActorId);
         }
+        public DbSet<movie_hospital_1.dataModel.RegisterVM> RegisterVM { get; set; } = default!;
 
     }
 
