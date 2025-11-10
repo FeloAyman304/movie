@@ -1,0 +1,55 @@
+﻿@model movie_hospital_1.dataModel.LoginVM
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container">
+    <h1>Login</h1>
+
+    <h4>LoginVM</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Login">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="UserOREmail" class="control-label"></label>
+                    <input asp-for="UserOREmail" class="form-control" />
+                    <span asp-validation-for="UserOREmail" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="password" class="control-label"></label>
+                    <input asp-for="password" class="form-control" />
+                    <span asp-validation-for="password" class="text-danger"></span>
+                </div>
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+    <div>
+        <a asp-action="register">Back to register</a>
+    </div>
+    <div>
+        <a asp-action="ResendEmailConfirmation">Back to ResendEmailConfirmation</a>
+    </div>
+    <div>
+        <a asp-action="ForgetPassword">ForgetPassword</a>
+    </div>
+
+
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

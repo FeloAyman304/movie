@@ -11,10 +11,10 @@ namespace movie_hospital_1.Reposotories.IReposotories
 
          void Delete(T entity, CancellationToken cancellationToken);
 
-         Task<IEnumerable<T>> GetAsync(
-        Expression<Func<T, bool>>? expression = null,
-        Expression<Func<T, object>>[]? includes = null,
-        CancellationToken cancellationToken = default);
+        Task<IEnumerable<T>> GetAsync(
+       Expression<Func<T, bool>>? expression = null,
+       Expression<Func<T, object>>[]? includes = null,
+       CancellationToken cancellationToken = default);
 
 
 

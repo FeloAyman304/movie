@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using movie_hospital_1.dataAccess;
 using movie_hospital_1.dataModel;
 using movie_hospital_1.Reposotories;
 using movie_hospital_1.Reposotories.IReposotories;
+using movie_hospital_1.Utilities;
 using NuGet.Protocol.Core.Types;
 
 namespace movie_hospital_1
@@ -30,16 +32,20 @@ namespace movie_hospital_1
             object value = builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                 options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
             })
-.AddEntityFrameworkStores<ApplicationDbContext>()
-.AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders()
+             .AddDefaultTokenProviders();
 
-            // ✅ أضيفي دول
             builder.Services.AddScoped<MovieRepository>();
             builder.Services.AddScoped<CategoryRepository>();
             builder.Services.AddScoped<CinemaRepository>();
             builder.Services.AddScoped<ActorRepository>();
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+            builder.Services.AddScoped<IRepossitory<ApplicationUserOTP>, Repossitory<ApplicationUserOTP>>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -20,6 +20,7 @@ namespace movie_hospital_1.dataAccess
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Actor> Actors { get; set; }
         public DbSet<MovieActor> MovieActors { get; set; }
+        public DbSet<ApplicationUserOTP> ApplicationUserOTPs { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
@@ -44,7 +45,9 @@ namespace movie_hospital_1.dataAccess
                 .WithMany(a => a.MovieActors)
                 .HasForeignKey(ma => ma.ActorId);
         }
-        public DbSet<movie_hospital_1.dataModel.RegisterVM> RegisterVM { get; set; } = default!;
+        public DbSet<movie_hospital_1.dataModel.newPasswordVM> newPasswordVM { get; set; } = default!;
+   
+       
 
     }
 
