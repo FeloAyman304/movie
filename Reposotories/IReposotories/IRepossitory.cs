@@ -24,7 +24,7 @@ namespace movie_hospital_1.Reposotories.IReposotories
                    Expression<Func<T, object>>[]? includes = null,
                    CancellationToken cancellationToken = default
                );
-        Task Commit(CancellationToken cancellationToken);
+        Task Commit(CancellationToken cancellationToken=default);
        
     }
 }

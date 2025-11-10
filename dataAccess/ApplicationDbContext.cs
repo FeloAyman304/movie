@@ -46,8 +46,8 @@ namespace movie_hospital_1.dataAccess
                 .HasForeignKey(ma => ma.ActorId);
         }
         public DbSet<movie_hospital_1.dataModel.newPasswordVM> newPasswordVM { get; set; } = default!;
-   
-       
+
+
 
     }
 

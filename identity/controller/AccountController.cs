@@ -187,7 +187,7 @@ namespace movie_hospital_1.identity.controller
                 validTo = DateTime.UtcNow.AddDays(1),
 
             });
-
+            _ApplicationUserOTPRepossitory.Commit();
             return RedirectToAction("ValidateOTP", new { userId = user.Id });
 
         }
@@ -208,17 +208,11 @@ namespace movie_hospital_1.identity.controller
                 e.isValid
             );
 
-            if (result is null)
+            if (result is  null)
             {
                 TempData["ErrorMessage"] = "Invalid OTP";
                 return RedirectToAction(nameof(ValidateOTP), new { userId = validateOTPVM.ApplicationUserId });
             }
-
-            // invalidate OTP after successful use
-            result.isValid = false;
-
-            _ApplicationUserOTPRepossitory.Update(result);
-            await _ApplicationUserOTPRepossitory.Commit(CancellationToken.None);
 
             return RedirectToAction("NewPassword", new { userId = validateOTPVM.ApplicationUserId });
         }

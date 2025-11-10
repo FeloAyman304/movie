@@ -58,7 +58,7 @@ namespace movie_hospital_1.Reposotories
             return (await GetAsync(expression, includes, cancellationToken)).FirstOrDefault();
         }
 
-        public async Task Commit(CancellationToken cancellationToken)
+        public async Task Commit(CancellationToken cancellationToken=default)
         {
             try
             {
