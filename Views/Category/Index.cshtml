@@ -33,3 +33,105 @@
         }
     </tbody>
 </table>
+
+
+<style>
+    /* ===== Categories Table Style ===== */
+    /* General Body and Container Styling (Repetition from previous CSS for consistency) */
+    body {
+        background-color: #0d0a17;
+        color: #f0f0f0;
+        font-family: 'Arial', sans-serif;
+    }
+
+    /* Page Heading Styling */
+    h2.text-center.mt-3 {
+        color: #d175ff; /* Bright purple/magenta for the main heading */
+        text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
+        margin-bottom: 25px !important;
+    }
+
+    /* Add New Category Button (Primary Action) */
+    .btn-primary {
+        background-color: #6a0dad; /* Dark Purple primary color */
+        border-color: #6a0dad;
+        color: #ffffff;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+        .btn-primary:hover {
+            background-color: #9333ea;
+            border-color: #9333ea;
+            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+        }
+
+    /* Table Styling */
+    .table {
+        background-color: #1a1625; /* Dark background for the entire table */
+        border: 1px solid #3b3054 !important; /* Muted border */
+        color: #f0f0f0; /* Light text color for table content */
+        border-radius: 10px;
+        overflow: hidden; /* Ensures rounded corners look correct */
+    }
+
+    /* Table Header Styling (thead) */
+    .table-dark {
+        /* Override Bootstrap's table-dark for a neon look */
+        background-color: #3b3054 !important;
+        border-bottom: 2px solid #6a0dad; /* Primary purple separator */
+    }
+
+        .table-dark th {
+            color: #d175ff; /* Neon text color for column titles */
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+    /* Table Body Rows Styling (tbody) */
+    .table tbody tr {
+        transition: background-color 0.3s ease;
+    }
+
+        .table tbody tr:hover {
+            background-color: #2b263b; /* Slightly lighter background on hover */
+        }
+
+    .table tbody td {
+        border-color: #3b3054; /* Consistent border color */
+    }
+
+    /* Actions Column Buttons */
+
+    /* Edit Button (Warning/Neon Purple) */
+    .btn-warning {
+        background-color: #d175ff; /* Bright Neon Purple */
+        border-color: #d175ff;
+        color: #1a1625 !important; /* Dark text for contrast on bright button */
+        font-weight: bold;
+        border-radius: 5px;
+        margin-right: 5px;
+    }
+
+        .btn-warning:hover {
+            background-color: #e599ff;
+            border-color: #e599ff;
+        }
+
+    /* Delete Button (Danger/Red) */
+    .btn-danger {
+        background-color: #ff6666; /* Bright Red for danger */
+        border-color: #ff6666;
+        color: #ffffff;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+
+        .btn-danger:hover {
+            background-color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+</style>

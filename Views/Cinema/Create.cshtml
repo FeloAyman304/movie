@@ -25,3 +25,102 @@
     <button type="submit" class="btn btn-success">💾 Save</button>
     <a asp-action="Index" class="btn btn-secondary">⬅ Back</a>
 </form>
+
+<style>
+    /* General Body Styling (Consistency) */
+    body {
+        background-color: #0d0a17;
+        color: #f0f0f0;
+        font-family: 'Arial', sans-serif;
+        padding: 20px;
+    }
+
+    /* Page Heading Styling */
+    h2.mb-4.text-center {
+        color: #d175ff; /* Bright purple/magenta for the main heading */
+        text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
+        margin-bottom: 30px !important;
+    }
+
+    /* Form Container Styling (Targeting the form element)
+       NOTE: It is highly recommended to wrap the form in a centered <div> with class 'card' or similar.
+       If you wrap it in a card, use the styles for '.card' from previous responses. */
+    form {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #1a1625; /* Dark background for the form area */
+        border: 1px solid #6a0dad;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(106, 13, 173, 0.7), 0 0 5px rgba(106, 13, 173, 0.5); /* Neon glow */
+    }
+
+    /* Label Styling */
+    .form-label,
+    label { /* Targeting both form-label and generic label for the Location field */
+        color: #d175ff; /* Bright purple for labels */
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Input/Textarea/File Field Styling */
+    .form-control {
+        background-color: #2b263b;
+        border: 1px solid #6a0dad;
+        color: #ffffff;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+    }
+
+    /* File Input Specific Styling (to make it look consistent) */
+    input[type="file"].form-control {
+        padding-top: 10px; /* Adjust padding for file input text */
+    }
+
+    /* Focus State */
+    .form-control:focus {
+        background-color: #3f3952;
+        border-color: #d175ff;
+        box-shadow: 0 0 8px rgba(209, 117, 255, 0.9);
+        color: #ffffff;
+    }
+
+    /* Validation Text Styling */
+    .text-danger {
+        color: #ff6666 !important;
+        font-weight: bold;
+    }
+
+    /* Save Button (btn-success) - Primary Purple */
+    .btn-success {
+        background-color: #6a0dad;
+        border-color: #6a0dad;
+        color: #ffffff;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+        .btn-success:hover {
+            background-color: #9333ea;
+            border-color: #9333ea;
+            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+        }
+
+    /* Back Button (btn-secondary) */
+    .btn-secondary {
+        background-color: #3b3054;
+        border-color: #3b3054;
+        color: #f0f0f0;
+        font-weight: 500;
+        border-radius: 8px;
+        margin-left: 10px;
+    }
+
+        .btn-secondary:hover {
+            background-color: #4c406b;
+            border-color: #4c406b;
+        }
+</style>

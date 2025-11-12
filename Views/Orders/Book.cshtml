@@ -1,0 +1,195 @@
+﻿@model movie_hospital_1.dataModel.Movie // الموديل هو كائن الفيلم نفسه
+
+@{
+    ViewData["Title"] = "Confirm Booking";
+}
+
+<div class="container mt-5 neon-container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4 neon-heading">🎟️ Confirm Your Booking</h2>
+
+            <div class="card booking-card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            @if (!string.IsNullOrEmpty(Model.ImageURL))
+                            {
+                                <img src="@Model.ImageURL" class="img-fluid rounded-lg booking-image shadow-lg" alt="@Model.Title" />
+                            }
+                            else
+                            {
+                                <div class="no-image-placeholder">No Image Available</div>
+                            }
+                        </div>
+
+                        <div class="col-md-8">
+                            <h3 class="card-title neon-title">@Model.Title</h3>
+                            <p class="text-muted">@Model.Description</p>
+                            <hr class="neon-divider" />
+
+                            <dl class="row booking-details">
+                                <dt class="col-sm-4">Category:</dt>
+                                <dd class="col-sm-8">@Model.Category?.Name</dd>
+
+                                <dt class="col-sm-4">Cinema:</dt>
+                                <dd class="col-sm-8">@Model.Cinema?.Name</dd>
+
+                                <dt class="col-sm-4 price-label">Ticket Price:</dt>
+                                <dd class="col-sm-8 price-value">@Model.Price.ToString("C")</dd>
+                            </dl>
+
+                            <hr class="neon-divider" />
+
+                            <form asp-action="Book" asp-controller="Orders" method="post">
+                                <input type="hidden" name="movieId" value="@Model.Id" />
+
+                                <div class="form-group row mb-3">
+                                    <label for="quantity" class="col-sm-4 col-form-label quantity-label">Number of Tickets:</label>
+                                    <div class="col-sm-4">
+                                        <input type="number" id="quantity" name="quantity" class="form-control quantity-input"
+                                               value="1" min="1" required />
+                                    </div>
+                                </div>
+
+                                <div class="text-center mt-4">
+                                    <h4 class="total-price-text">Total Price: <span id="totalPriceDisplay">@Model.Price.ToString("C")</span></h4>
+                                    <button type="submit" class="btn btn-lg neon-submit-btn w-75 mt-3">
+                                        Confirm and Pay
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const pricePerTicket = @Model.Price;
+        const quantityInput = document.getElementById('quantity');
+        const totalPriceDisplay = document.getElementById('totalPriceDisplay');
+
+        function updateTotalPrice() {
+            const quantity = parseInt(quantityInput.value) || 0;
+            const total = pricePerTicket * quantity;
+            // استخدام toLocaleString لتنسيق العملة بشكل صحيح
+            totalPriceDisplay.textContent = total.toLocaleString('en-US', { style: 'currency', currency: 'SAR' }); // عدّل العملة حسب استخدامك
+        }
+
+        quantityInput.addEventListener('input', updateTotalPrice);
+        // تحديث أولي في حال كان المتصفح يحفظ قيمة سابقة
+        updateTotalPrice();
+    });
+</script>
+
+
+<style>
+    /* -------------------------------------------------------------------------- */
+    /* تنسيقات النيون (استكمال لنمطك) */
+    /* -------------------------------------------------------------------------- */
+
+    body {
+        background-color: #0d0a17;
+        color: #f0f0f0;
+    }
+
+    .neon-heading {
+        color: #d175ff!important;
+        text-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+        font-weight: bold;
+    }
+
+    .booking-card {
+        background-color: #1a1625;
+        border: 2px solid #6a0dad;
+        box-shadow: 0 0 20px rgba(106, 13, 173, 0.5);
+        border-radius: 15px;
+    }
+
+    .neon-title {
+        color: #39ff14!important; /* Neon Green */
+        text-shadow: 0 0 8px rgba(57, 255, 20, 0.8);
+        font-weight: 700;
+    }
+
+    .booking-image {
+        max-height: 250px;
+        object-fit: cover;
+        border: 3px solid #d175ff; /* Neon Purple frame */
+    }
+
+    .neon-divider {
+        border-top: 1px solid #3b3054;
+    }
+
+    .booking-details dt {
+        color: #9333ea!important /* Muted Purple */
+        font-weight: 600;
+    }
+
+    .price-label {
+        color: #ffcc00 !important; /* Gold/Yellow */
+        font-weight: 700 !important;
+    }
+
+    .price-value {
+        color: #ffcc00 !important;
+        font-weight: bold;
+    }
+
+    .quantity-label {
+        color: #d175ff;
+        font-weight: 600;
+    }
+
+    .quantity-input {
+        background-color: #0d0a17;
+        border: 1px solid #6a0dad;
+        color: #f0f0f0;
+        transition: all 0.3s;
+    }
+
+        .quantity-input:focus {
+            background-color: #1a1625;
+            border-color: #39ff14;
+            box-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
+            color: #f0f0f0;
+        }
+
+    .total-price-text {
+        color: #f0f0f0;
+    }
+
+    #totalPriceDisplay {
+        color: #ffcc00; /* Gold */
+        font-weight: bold;
+        text-shadow: 0 0 5px rgba(255, 204, 0, 0.8);
+    }
+
+    .neon-submit-btn {
+        background-color: #d175ff; /* Neon Purple */
+        border: 2px solid #d175ff;
+        color: #1a1625;
+        font-weight: bold;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+        .neon-submit-btn:hover {
+            background-color: #e599ff;
+            border-color: #e599ff;
+            color: #0d0a17;
+            box-shadow: 0 0 20px rgba(209, 117, 255, 0.8);
+        }
+        dl{
+            color:white!important;
+        }
+        p{
+            color:white!important;
+        }
+</style>

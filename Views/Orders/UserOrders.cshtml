@@ -1,0 +1,216 @@
+﻿@model IEnumerable<movie_hospital_1.dataModel.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="container-fluid mt-4">
+    <h2 class="text-center neon-heading">🛒 My Movie Bookings</h2>
+
+    @* عرض رسائل TempData (مثل رسالة النجاح في الحجز أو الحذف) *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-warning text-center mt-5 no-orders-alert">
+            <i class="bi bi-info-circle-fill"></i> You currently have no active bookings. Start exploring movies!
+            <br />
+            <a asp-controller="Home" asp-action="Index" class="btn btn-sm mt-3 neon-link-btn">Browse Movies</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Movie Title</th>
+                        <th>Tickets</th>
+                        <th>Total Price</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th> @* ✨ عمود الإجراءات (الحذف) *@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderByDescending(o => o.OrderDate))
+                    {
+                        <tr>
+                            <td>#@item.Id</td>
+                            <td>
+                                @item.Movie?.Title
+                                @if (item.Movie == null)
+                                {
+                                    <span class="text-muted">(Movie Deleted)</span>
+                                }
+                            </td>
+                            <td>@item.Quantity</td>
+                            <td class="price-cell">@item.TotalPrice.ToString("C")</td>
+                            <td>@item.OrderDate.ToString("dd MMM yyyy HH:mm")</td>
+                            <td>
+                                @{
+                                    string badgeClass = item.OrderStatus switch
+                                    {
+                                        "Completed" => "bg-success neon-badge-success",
+                                        "Pending" => "bg-warning neon-badge-pending",
+                                        "Cancelled" => "bg-danger neon-badge-danger",
+                                        _ => "bg-secondary"
+                                    };
+                                }
+                                <span class="badge @badgeClass">@item.OrderStatus</span>
+                            </td>
+
+                            @* ✨ زر الحذف *@
+                            <td>
+                                <form asp-controller="Orders" asp-action="DeleteOrder" method="post"
+                                      onsubmit="return confirm('Are you sure you want to cancel this booking (Order ID: @item.Id)? This action cannot be undone.');">
+
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit" class="btn btn-sm btn-danger neon-delete-btn">
+                                        <i class="bi bi-trash"></i> Cancel
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<style>
+    /* -------------------------------------------------------------------------- */
+    /* التنسيقات العامة للحفاظ على نمط النيون */
+    /* -------------------------------------------------------------------------- */
+
+    body {
+        background-color: #0d0a17;
+        color: #f0f0f0;
+    }
+
+    .neon-heading {
+        color: #d175ff; /* Neon Purple */
+        text-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+
+    .orders-table {
+        background-color: #1a1625; /* Dark background */
+        border: 2px solid #6a0dad !important; /* Neon border */
+        color: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        .orders-table thead {
+            background-color: #3b3054 !important;
+            border-bottom: 2px solid #6a0dad;
+        }
+
+        .orders-table th {
+            color: #39ff14; /* Neon Green text */
+            font-weight: bold;
+            text-transform: uppercase;
+            vertical-align: middle;
+            border-color: #3b3054;
+        }
+
+        .orders-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+            .orders-table tbody tr:hover {
+                background-color: #2b263b; /* Slightly lighter background on hover */
+            }
+
+        .orders-table td {
+            border-color: #3b3054;
+            vertical-align: middle;
+        }
+
+    .price-cell {
+        font-weight: bold;
+        color: #ffcc00; /* Gold/Yellow */
+        text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+    }
+
+    /* تنسيقات الـ Badges لحالة الطلب */
+    .badge {
+        padding: 0.5em 0.8em;
+        font-size: 0.8em;
+        font-weight: bold;
+        border-radius: 10px;
+    }
+
+    .neon-badge-success {
+        background-color: #39ff14 !important; /* Neon Green */
+        color: #1a1625 !important;
+    }
+
+    .neon-badge-pending {
+        background-color: #ffa500 !important; /* Orange */
+        color: #1a1625 !important;
+    }
+
+    .neon-badge-danger {
+        background-color: #ff6666 !important; /* Red */
+        color: #1a1625 !important;
+    }
+
+    /* زر الحذف */
+    .neon-delete-btn {
+        background-color: #ff4d4d; /* Red Neon */
+        border: 1px solid #ff4d4d;
+        color: #1a1625;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+        .neon-delete-btn:hover {
+            background-color: #ff7f7f;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.8);
+            border-color: #ff7f7f;
+        }
+
+
+    /* تنبيه لا يوجد حجوزات */
+    .no-orders-alert {
+        background-color: #1a1625;
+        border-color: #d175ff;
+        color: #f0f0f0;
+        box-shadow: 0 0 10px rgba(209, 117, 255, 0.5);
+        border-radius: 10px;
+    }
+
+    .neon-link-btn {
+        background-color: #6a0dad;
+        border-color: #6a0dad;
+        color: #ffffff;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+        .neon-link-btn:hover {
+            background-color: #9333ea;
+            border-color: #9333ea;
+            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+        }
+</style>

@@ -31,3 +31,90 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+
+            <style>
+    /* General Body and Container Styling */
+    body {
+        /* Set a dark background color for the whole page */
+        background-color: #0d0a17;
+        color: #f0f0f0; /* Light text color for contrast */
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+        max-width: 600px; /* Keep the form centered and contained */
+    }
+
+    /* Form Card Styling - Making it dark and adding a glow */
+    .p-4.border.rounded.shadow-sm.bg-light {
+        /* Override Bootstrap's bg-light */
+        background-color: #1a1625 !important;
+        border: 1px solid #6a0dad; /* A dark purple border */
+        box-shadow: 0 0 20px rgba(106, 13, 173, 0.7), 0 0 5px rgba(106, 13, 173, 0.5) !important; /* Neon purple glow */
+        color: #f0f0f0;
+    }
+
+    /* Heading Styling - Neon purple color */
+    h2 {
+        color: #d175ff; /* A bright purple/magenta */
+        text-shadow: 0 0 10px rgba(209, 117, 255, 0.8); /* Light glow for the header */
+    }
+
+    /* Label Styling */
+    .form-label {
+        color: #d175ff; /* Match the bright purple for labels */
+    }
+
+    /* Input/Textarea Styling - Dark background for fields */
+    .form-control {
+        background-color: #2b263b; /* Slightly lighter dark background for input fields */
+        border: 1px solid #6a0dad; /* Dark purple border */
+        color: #ffffff; /* White text inside the input */
+        transition: all 0.3s ease;
+    }
+
+        /* Focus State for Inputs - Enhance the neon glow on focus */
+        .form-control:focus {
+            background-color: #3f3952;
+            border-color: #d175ff; /* Bright purple border on focus */
+            box-shadow: 0 0 8px rgba(209, 117, 255, 0.9); /* Stronger neon glow */
+            color: #ffffff;
+        }
+
+    /* Validation Text Styling */
+    .text-danger {
+        color: #ff6666 !important; /* Use a bright red for errors */
+        font-weight: bold;
+    }
+
+    /* Submit Button Styling - Success color changed to primary purple */
+    .btn-success {
+        /* Primary button color - Dark purple */
+        background-color: #6a0dad;
+        border-color: #6a0dad;
+        color: #ffffff;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-success:hover, .btn-success:focus {
+            /* Hover state - Brighter neon purple */
+            background-color: #9333ea;
+            border-color: #9333ea;
+            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8); /* Glow effect on hover */
+        }
+
+    /* Back Button Styling - Secondary color */
+    .btn-secondary {
+        background-color: #3b3054; /* Darker, muted purple for secondary action */
+        border-color: #3b3054;
+        color: #f0f0f0;
+    }
+
+        .btn-secondary:hover {
+            background-color: #4c406b;
+            border-color: #4c406b;
+        }
+            </style>

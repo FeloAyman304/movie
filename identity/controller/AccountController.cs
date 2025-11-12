@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 using movie_hospital_1.dataModel;
 using movie_hospital_1.Migrations;
 using movie_hospital_1.Reposotories.IReposotories;
+using movie_hospital_1.Utilities;
 using System.Threading.Tasks;
 
 namespace movie_hospital_1.identity.controller
@@ -83,17 +84,22 @@ namespace movie_hospital_1.identity.controller
             return View();
         }
         [HttpPost]
+
+
         public async Task<IActionResult> Login(LoginVM loginVM)
         {
             if (!ModelState.IsValid)
                 return View(loginVM);
+
             var user = await _userManager.FindByNameAsync(loginVM.UserOREmail) ??
                 await _userManager.FindByEmailAsync(loginVM.UserOREmail);
+
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Invalid UserName / Email or password");
                 return View(loginVM);
             }
+
             var result = await _SignInManager.PasswordSignInAsync(user, loginVM.password, loginVM.RememberMe, lockoutOnFailure: true);
 
             if (!result.Succeeded)
@@ -101,17 +107,24 @@ namespace movie_hospital_1.identity.controller
                 if (result.IsLockedOut)
                     ModelState.AddModelError(string.Empty, "Your account is locked please try again After 5 min");
                 else if (!user.EmailConfirmed)
-
                     ModelState.AddModelError(string.Empty, "Please confirm your email first");
                 else
                     ModelState.AddModelError(string.Empty, "Invalid UserName / Email or password");
                 return View(loginVM);
-
-
-
             }
-            return RedirectToAction("Index", "Home");
+
+      
+            if (await _userManager.IsInRoleAsync(user, SD.ROLE_SUPER_ADMIN) ||
+                await _userManager.IsInRoleAsync(user, SD.ROLE_ADMIN))
+            {
+                return RedirectToAction("Dashboard", "Admin");
+            }
+
+            return RedirectToAction("Index", "Home"); 
         }
+
+
+
         public ActionResult ResendEmailConfirmation()
         {
             return View();
@@ -250,6 +263,113 @@ namespace movie_hospital_1.identity.controller
 
             return RedirectToAction("Login");
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await _SignInManager.SignOutAsync();
+            return RedirectToAction("Login", "Account");
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login");
+
+            var model = new ProfileVM()
+            {
+                Id = user.Id,
+                firstName = user.firstName,
+                lastName = user.lastName,
+                Email = user.Email,
+                userName = user.UserName
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login");
+
+            var model = new ProfileVM()
+            {
+                Id = user.Id,
+                firstName = user.firstName,
+                lastName = user.lastName,
+                Email = user.Email,
+                userName = user.UserName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProfile(ProfileVM model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null)
+                return RedirectToAction("Login");
+
+            user.firstName = model.firstName;
+            user.lastName = model.lastName;
+            user.Email = model.Email;
+            user.UserName = model.userName;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                foreach (var item in result.Errors)
+                    ModelState.AddModelError("", item.Description);
+                return View(model);
+            }
+
+            TempData["success-notification"] = "Profile updated successfully!";
+            return RedirectToAction("Profile");
+        }
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login");
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError("", error.Description);
+                return View(model);
+            }
+
+            // بعد النجاح نعمل sign in جديد علشان التوكن يتحدث
+            await _SignInManager.RefreshSignInAsync(user);
+
+            TempData["success-notification"] = "Password changed successfully!";
+            return RedirectToAction("Profile");
+        }
+
 
     }
 }

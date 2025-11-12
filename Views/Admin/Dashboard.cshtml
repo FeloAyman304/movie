@@ -1,0 +1,155 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>Welcome to Admin Dashboard</h2>
+@* Logout Button *@
+@* <form asp-action="Logout" asp-controller="Account" method="post" class="d-flex">
+    <button type="submit" class="btn btn-danger-neon">
+        Sign Out 🚪
+    </button>
+</form> *@
+
+<ul>
+    <li class="nav-item">
+        <a class="nav-link active" href="/Category/index">
+            <div class="d-flex align-items-center">
+                <span class="nav-link-text ps-1">Category</span>
+            </div>
+        </a>
+        <!-- more inner pages-->
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/Cinema/index">
+            <div class="d-flex align-items-center">
+                <span class="nav-link-text ps-1">Cinema</span>
+            </div>
+        </a>
+        <!-- more inner pages-->
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/Actor/index">
+            <div class="d-flex align-items-center">
+                <span class="nav-link-text ps-1">Actor</span>
+            </div>
+        </a>
+        <!-- more inner pages-->
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/movie/index">
+            <div class="d-flex align-items-center">
+                <span class="nav-link-text ps-1">Movie</span>
+            </div>
+        </a>
+        <!-- more inner pages-->
+    </li>
+
+</ul>
+
+<style>
+    /* General Body Styling (Consistency with previous pages) */
+    /* General Body Styling (Consistency with previous pages) */
+    body {
+        background-color: #0d0a17;
+        color: #f0f0f0;
+        font-family: 'Arial', sans-serif;
+        padding: 20px;
+        position: relative; /* مهم لتمكين تحديد موقع زر الخروج */
+        min-height: 100vh;
+    }
+
+    /* 1. Dashboard Heading Styling */
+    /* ----------------------------------------------------- */
+
+    h2 {
+        color: #d175ff; /* Bright purple/magenta for the main heading */
+        text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #3b3054; /* Subtle dark separator */
+    }
+
+    /* 2. Logout Button Positioning and Styling (Top Right) */
+    /* ----------------------------------------------------- */
+
+    /* Style for the form container (to ensure it doesn't break flow) */
+    form.d-flex {
+        position: absolute;
+        top: 20px; /* المسافة من الأعلى */
+        /* إذا كانت الواجهة تبدأ من اليمين (RTL)، استخدم left: 20px */
+        right: 20px; /* المسافة من اليمين (للوحة تحكم LTR) */
+        z-index: 1000;
+    }
+
+    /* Logout Button (btn-danger-neon) */
+    .btn-danger-neon {
+        background-color: #ff6666; /* Bright red color */
+        border-color: #ff6666;
+        color: #1a1625 !important;
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 8px 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .btn-danger-neon:hover {
+            background-color: #ff4d4d;
+            border-color: #ff4d4d;
+            box-shadow: 0 0 15px rgba(255, 102, 102, 0.8); /* Red neon glow on hover */
+            transform: scale(1.05);
+        }
+
+    /* 3. Vertical Links Styling (Dashboard Buttons) */
+    /* ----------------------------------------------------- */
+
+    /* List Styling (Removing default list styles) */
+    ul {
+        list-style: none; /* Remove bullet points */
+        padding: 0;
+        max-width: 450px; /* Constrain the width of the button column */
+        margin: auto; /* Center the button column */
+    }
+
+    /* List Item Spacing */
+    .nav-item {
+        margin-bottom: 20px; /* Space between the buttons */
+        border-radius: 12px;
+    }
+
+    /* Nav Link/Button Styling - The Core Neon Design */
+    .nav-link {
+        display: block; /* Make the link fill the whole list item */
+        padding: 20px;
+        text-decoration: none;
+        color: #ffffff; /* Default text color */
+        background-color: #1a1625; /* Dark background for the button */
+        border: 2px solid #6a0dad; /* Dark purple border */
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        text-align: center; /* Center text inside the button */
+    }
+
+    .nav-link-text {
+        font-size: 1.2rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    /* Hover State - Neon Glow Effect */
+    .nav-link:hover,
+    .nav-link.active {
+        color: #d175ff; /* Bright neon purple text on hover/active */
+        background-color: #2b263b; /* Slightly lighter dark background */
+        border-color: #d175ff; /* Bright border */
+        box-shadow: 0 0 18px rgba(209, 117, 255, 0.9), inset 0 0 10px rgba(209, 117, 255, 0.6); /* Strong neon glow */
+        transform: translateY(-3px); /* Slight lift effect */
+    }
+
+    /* Centering the content inside the link */
+    .d-flex.align-items-center {
+        justify-content: center;
+    }
+</style>

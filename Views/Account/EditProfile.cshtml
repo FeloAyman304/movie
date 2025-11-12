@@ -1,0 +1,158 @@
+﻿@model movie_hospital_1.dataModel.ProfileVM
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Edit Profile</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="EditProfile" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="firstName" class="form-label"></label>
+                    <input asp-for="firstName" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="lastName" class="form-label"></label>
+                    <input asp-for="lastName" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="userName" class="form-label"></label>
+                    <input asp-for="userName" class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check2-circle"></i> Save Changes
+                </button>
+                <a asp-action="Profile" class="btn btn-secondary ms-2">
+                    Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+                    <style>
+    /* General Body Styling (Consistency) */
+    body {
+        background-color: #0d0a17 !important;
+        color: #f0f0f0 !important;
+        font-family: 'Open Sans', sans-serif;
+        min-height: 100vh;
+    }
+
+    /* Container Styling */
+    .container.mt-4 {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Start from the top */
+        padding-top: 50px;
+    }
+
+    /* 1. Main Card Styling */
+    /* ----------------------------------------------------- */
+
+    .card.shadow-sm {
+        max-width: 600px; /* عرض مناسب لنموذج تعديل الملف الشخصي */
+        width: 100%;
+        background-color: #1a1625; /* خلفية داكنة للبطاقة */
+        border: 2px solid #6a0dad; /* حدود داكنة أرجوانية */
+        border-radius: 12px;
+        transition: box-shadow 0.4s ease;
+        /* تطبيق توهج نيون على البطاقة */
+        box-shadow: 0 0 25px rgba(106, 13, 173, 0.5);
+    }
+
+    /* 2. Card Header Styling (The Neon Title Bar) */
+    /* ----------------------------------------------------- */
+
+    .card-header.bg-dark {
+        background-color: #3b3054 !important; /* خلفية داكنة للرأس */
+        border-bottom: 2px solid #d175ff; /* خط نيون أرجواني فاصل */
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        padding: 15px;
+    }
+
+    .card-header h4 {
+        color: #d175ff; /* نيون أرجواني للعنوان */
+        text-shadow: 0 0 10px rgba(209, 117, 255, 0.7);
+        font-weight: 700;
+    }
+
+    /* 3. Form Fields Styling */
+    /* ----------------------------------------------------- */
+
+    .form-label {
+        color: #f0f0f0; /* أبيض ساطع للتسميات */
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .form-control {
+        background-color: #2b263b;
+        border: 1px solid #6a0dad;
+        color: #ffffff;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+    }
+
+        .form-control:focus {
+            background-color: #3f3952;
+            border-color: #d175ff;
+            box-shadow: 0 0 8px rgba(209, 117, 255, 0.9);
+            color: #ffffff;
+            outline: none;
+        }
+
+    /* 4. Buttons Styling */
+    /* ----------------------------------------------------- */
+
+    /* Save Changes Button (btn-success) - Primary Neon Purple */
+    .btn-success {
+        background-color: #6a0dad;
+        border-color: #6a0dad;
+        color: #ffffff;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-success:hover {
+            background-color: #9333ea;
+            border-color: #9333ea;
+            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+        }
+
+    /* Cancel Button (btn-secondary) - Darker/Subtle */
+    .btn-secondary {
+        background-color: #3b3054;
+        border-color: #3b3054;
+        color: #f0f0f0;
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #4c406b;
+            border-color: #4c406b;
+        }
+                    </style>

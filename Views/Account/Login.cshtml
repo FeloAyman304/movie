@@ -1,13 +1,13 @@
 ﻿@model movie_hospital_1.dataModel.LoginVM
 
-@{
+@* @{
     ViewData["Title"] = "Login";
-}
+} *@
 
 <div class="container">
     <h1>Login</h1>
 
-    <h4>LoginVM</h4>
+ 
     <hr />
     <div class="row">
         <div class="col-md-4">
@@ -50,6 +50,123 @@
 
 
 </div>
-@section Scripts {
+@* @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+} *@
+
+
+                <style>
+    /* ====== Login Page Style ====== */
+
+    body {
+        background-color: #0d0d0d;
+        font-family: 'Poppins', sans-serif;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .container {
+        background: linear-gradient(145deg, #090909, #1a001a);
+        border-radius: 20px;
+        box-shadow: 0 0 25px rgba(128, 0, 255, 0.4);
+        padding: 40px 60px;
+        width: 420px;
+        text-align: center;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+        color: #a05bff;
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    hr {
+        border: none;
+        height: 2px;
+        background: linear-gradient(90deg, #a05bff, #5800ff);
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    label {
+        color: #c9a3ff;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 300px;
+        max-width: 320px; /* تقدري تغيريها لو عايزة أوسع أو أضيق */
+        margin: 0 auto;
+        display: block;
+        background-color: transparent;
+        border: 1px solid #5c00ff;
+        border-radius: 8px;
+        color: #fff;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+        transition: 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #a05bff;
+            box-shadow: 0 0 10px rgba(160, 91, 255, 0.5);
+            outline: none;
+        }
+    .text-danger {
+        font-size: 0.85rem;
+        color: #ff6666;
+    }
+
+    .btn-primary {
+        background: linear-gradient(90deg, #5c00ff, #a05bff);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        width: 100%;
+        transition: 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #a05bff, #5c00ff);
+            box-shadow: 0 0 15px rgba(160, 91, 255, 0.7);
+            transform: scale(1.03);
+        }
+
+    a {
+        color: #a05bff;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+        a:hover {
+            text-decoration: underline;
+            color: #c9a3ff;
+        }
+
+    .form-check-label {
+        font-size: 0.9rem;
+        color: #bfbfbf;
+    }
+
+    .form-check-input {
+        accent-color: #a05bff;
+     
+    }
+
+    input{
+		width: 200px;
+    }
+   
+
+    
+</style>

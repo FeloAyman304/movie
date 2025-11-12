@@ -1,7 +1,11 @@
-﻿namespace movie_hospital_1.dataModel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace movie_hospital_1.dataModel
 {
     public class ApplicationUserOTP
+
     {
+        [Key]
         public string Id { get; set; }
      
         public string OTP { get; set; }

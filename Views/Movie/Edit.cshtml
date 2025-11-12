@@ -58,6 +58,12 @@
         <span asp-validation-for="CinemaId" class="text-danger"></span>
     </div>
 
+    <div class="form-group mb-3">
+        <label asp-for="Price" class="form-label fw-bold">Price</label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
     <div class="mb-3">
         <label class="form-label">Actors</label>
         <select name="selectedActors" class="form-select" multiple size="5">
@@ -84,3 +90,143 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }
+
+
+        <style>
+    /* General Body Styling (Consistency) */
+    body {
+        background-color: #0d0a17;
+        color: #f0f0f0;
+        font-family: 'Arial', sans-serif;
+        padding: 20px;
+    }
+
+    /* Page Heading Styling */
+    h2.mb-4.text-center {
+        color: #d175ff; /* Bright purple/magenta for the main heading */
+        text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
+        margin-bottom: 30px !important;
+    }
+
+    /* Form Container Styling */
+    form {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #1a1625; /* Dark background for the form area */
+        border: 1px solid #6a0dad;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(106, 13, 173, 0.7), 0 0 5px rgba(106, 13, 173, 0.5); /* Neon glow */
+    }
+
+    /* Label Styling */
+    .form-label,
+    label {
+        color: #d175ff; /* Bright purple for labels */
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Input/Textarea/File/Select Field Styling */
+    .form-control,
+    .form-select {
+        background-color: #2b263b;
+        border: 1px solid #6a0dad;
+        color: #ffffff;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        /* Custom select arrow styling */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23d175ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+    }
+
+        /* Focus State */
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #3f3952;
+            border-color: #d175ff;
+            box-shadow: 0 0 8px rgba(209, 117, 255, 0.9);
+            color: #ffffff;
+            outline: none;
+        }
+
+    /* Current Poster Image Styling */
+    form img.rounded.shadow-sm {
+        /* Targeting the image inside the form */
+        border-radius: 5px !important;
+        border: 3px solid #d175ff; /* Bright Neon frame */
+        box-shadow: 0 0 10px rgba(209, 117, 255, 0.5);
+        display: block;
+        margin-bottom: 10px;
+        height: auto; /* Allow auto height based on width=150 */
+        max-width: 150px;
+    }
+
+    /* Muted Text */
+    small.text-muted,
+    p.text-muted {
+        color: #9333ea !important;
+        font-size: 0.9rem;
+    }
+
+    /* Checkbox (Status) Styling */
+    .form-check-input {
+        background-color: #2b263b;
+        border: 2px solid #6a0dad;
+    }
+
+        .form-check-input:checked {
+            background-color: #d175ff;
+            border-color: #d175ff;
+            box-shadow: 0 0 5px rgba(209, 117, 255, 0.8);
+        }
+
+    .form-check-label {
+        color: #f0f0f0;
+        font-weight: normal;
+    }
+
+    /* Validation Text Styling */
+    .text-danger {
+        color: #ff6666 !important;
+        font-weight: bold;
+    }
+
+    /* Save Changes Button (btn-success) - Primary Purple */
+    .btn-success {
+        background-color: #6a0dad;
+        border-color: #6a0dad;
+        color: #ffffff;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin-right: 10px;
+    }
+
+        .btn-success:hover {
+            background-color: #9333ea;
+            border-color: #9333ea;
+            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+        }
+
+    /* Back Button (btn-secondary) */
+    .btn-secondary {
+        background-color: #3b3054;
+        border-color: #3b3054;
+        color: #f0f0f0;
+        font-weight: 500;
+        border-radius: 8px;
+    }
+
+        .btn-secondary:hover {
+            background-color: #4c406b;
+            border-color: #4c406b;
+        }
+        </style>

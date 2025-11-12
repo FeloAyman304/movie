@@ -33,6 +33,8 @@
                 <p>
                     <strong>Category:</strong> @Model.Category?.Name
                 </p>
+                <p><strong>price:</strong> @Model.Price $</p>
+
 
               @*   <p>
                     <strong>Status:</strong>
@@ -68,10 +70,183 @@
                 }
 
                 <div class="mt-4">
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Edit</a>
+                 
                     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
                 </div>
-            </div>
+                @* في Details.cshtml: استبدل نموذج الحجز القديم بهذا النموذج *@
+
+              
+@* تأكد أن هذا الكود ضمن صفحة تعرض موديل الفيلم *@
+
+<div class="mt-4">
+    <a asp-controller="Orders" 
+       asp-action="Book" 
+       asp-route-movieId="@Model.Id" 
+       class="btn btn-lg btn-book-neon w-100">
+        <i class="bi bi-ticket-fill"></i> BOOK NOW - @Model.Price.ToString("C")
+    </a>
+</div>            </div>
         </div>
     </div>
 </div>
+
+
+                        <style>
+    /* General Body Styling (Consistency) */
+    body {
+        background-color: #0d0a17 !important; /* خلفية داكنة */
+        color: #f0f0f0 !important; /* لون الخط الأساسي فاتح */
+        font-family: 'Open Sans', sans-serif;
+        min-height: 100vh;
+    }
+
+    /* 1. Main Card Container Styling */
+    /* ----------------------------------------------------- */
+
+    .card.shadow-lg {
+        background-color: #1a1625; /* خلفية داكنة للبطاقة */
+        border: 2px solid #6a0dad; /* حدود داكنة أرجوانية */
+        border-radius: 15px;
+        transition: box-shadow 0.4s ease;
+        /* التوهج النيون على البطاقة الرئيسية */
+        box-shadow: 0 0 25px rgba(106, 13, 173, 0.5);
+        max-width: 1000px;
+        margin: 40px auto; /* توسيط البطاقة في الصفحة */
+    }
+
+    /* 2. Movie and Cinema Details Section */
+    /* ----------------------------------------------------- */
+
+    /* Main Movie Title */
+    .col-md-8 h2.fw-bold {
+        color: #d175ff; /* نيون أرجواني للعنوان الرئيسي */
+        text-shadow: 0 0 10px rgba(209, 117, 255, 0.7);
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+    }
+
+    /* Description and Muted Text */
+    .col-md-8 p.text-muted {
+        color: #b0b0b0 !important;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    /* Data Labels (Category, Location, Cinema Name) */
+    .col-md-8 strong,
+    .col-md-4 .fw-bold {
+        color: #f0f0f0; /* أبيض ساطع لأسماء البيانات */
+        font-weight: 700 !important;
+    }
+
+    /* Location Text */
+    .col-md-4 p {
+        color: #cccccc;
+    }
+
+    /* Separator Line */
+    hr {
+        border-top: 2px solid #3b3054; /* خط فاصل داكن */
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    /* Actors Heading */
+    h5.mt-3 {
+        color: #d175ff;
+        font-size: 1.3rem;
+    }
+
+    /* 3. Cinema Image Styling */
+    /* ----------------------------------------------------- */
+
+    .col-md-4 img.img-fluid {
+        border: 3px solid #d175ff; /* حدود نيون حول صورة السينما */
+        box-shadow: 0 0 10px rgba(209, 117, 255, 0.5);
+    }
+
+    /* 4. Actor Profile Styling */
+    /* ----------------------------------------------------- */
+
+    .rounded-circle.shadow-sm {
+        transition: all 0.3s ease;
+        /* نمط الافتراضي لدوائر الممثلين */
+        border: 3px solid #6a0dad !important;
+        box-shadow: 0 0 5px rgba(106, 13, 173, 0.5);
+    }
+
+    .d-flex div.text-center:hover .rounded-circle {
+        /* تأثير التوهج النيون عند التمرير على صورة الممثل */
+        border-color: #d175ff !important;
+        box-shadow: 0 0 15px rgba(209, 117, 255, 1);
+        transform: scale(1.05);
+    }
+
+    .fw-semibold {
+        color: #cccccc;
+    }
+
+    /* 5. Buttons Styling */
+    /* ----------------------------------------------------- */
+
+    /* Edit Button (btn-primary) - Neon Purple */
+    .btn-primary {
+        background-color: #6a0dad;
+        border-color: #6a0dad;
+        color: #ffffff;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+        .btn-primary:hover {
+            background-color: #9333ea;
+            border-color: #9333ea;
+            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+        }
+
+    /* Back Button (btn-secondary) - Darker/Subtle */
+    .btn-secondary {
+        background-color: #3b3054;
+        border-color: #3b3054;
+        color: #f0f0f0;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #4c406b;
+            border-color: #4c406b;
+        }
+
+    /* Small text at the bottom of the cinema block */
+    .col-md-4 p.text-muted small {
+        color: #9333ea !important;
+    }
+    p{
+        color:white !important;
+    }
+
+    .btn-book-neon { /* زر الحجز باللون الموف النيون */
+        background-color: #d175ff; /* Purple Neon */
+        border-color: #d175ff;
+        color: #9333ea !important; /* نص داكن لتباين أفضل */
+        font-weight: bold;
+        border-radius: 8px; /* يمكن تعديل الحواف إذا كان الزر كبيرًا */
+        padding: 12px 20px; /* زيادة التباعد إذا كان الزر lg */
+        transition: all 0.3s ease;
+    }
+
+        .btn-book-neon:hover {
+            background-color: #e599ff;
+            border-color: #e599ff;
+            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8); /* توهج أرجواني عند التمرير */
+        }
+
+        .btn-book-neon:active {
+            background-color: #aa55cc !important;
+            border-color: #aa55cc !important;
+        }
+                        </style>

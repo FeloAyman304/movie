@@ -1,0 +1,142 @@
+﻿@model movie_hospital_1.dataModel.ProfileVM
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">My Profile</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>First Name:</strong> @Model.firstName</p>
+            <p><strong>Last Name:</strong> @Model.lastName</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Username:</strong> @Model.userName</p>
+
+            <a asp-action="EditProfile" class="btn btn-primary">
+                <i class="bi bi-pencil-square"></i> Edit Profile
+            </a>
+            <a asp-action="ChangePassword" class="btn btn-warning ms-2">
+                <i class="bi bi-lock"></i> Change Password
+            </a>
+
+        </div>
+    </div>
+</div>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<style>
+    /* General Body Styling (Consistency) */
+    body {
+        background-color: #0d0a17 !important;
+        color: #f0f0f0 !important;
+        font-family: 'Open Sans', sans-serif;
+        min-height: 100vh;
+    }
+
+    /* Container Styling */
+    .container.mt-4 {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Start from the top */
+        padding-top: 50px;
+    }
+
+    /* 1. Main Card Styling */
+    /* ----------------------------------------------------- */
+
+    .card.shadow-sm {
+        max-width: 550px; /* عرض مناسب لعرض البيانات */
+        width: 100%;
+        background-color: #1a1625; /* خلفية داكنة للبطاقة */
+        border: 2px solid #6a0dad; /* حدود داكنة أرجوانية */
+        border-radius: 12px;
+        transition: box-shadow 0.4s ease;
+        /* تطبيق توهج نيون على البطاقة */
+        box-shadow: 0 0 25px rgba(106, 13, 173, 0.5);
+    }
+
+    /* 2. Card Header Styling (The Neon Title Bar) */
+    /* ----------------------------------------------------- */
+
+    .card-header.bg-dark {
+        background-color: #3b3054 !important; /* خلفية داكنة للرأس */
+        border-bottom: 2px solid #d175ff; /* خط نيون أرجواني فاصل */
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        padding: 15px;
+    }
+
+    .card-header h4 {
+        color: #d175ff; /* نيون أرجواني للعنوان */
+        text-shadow: 0 0 10px rgba(209, 117, 255, 0.7);
+        font-weight: 700;
+    }
+
+    /* 3. Profile Data Display */
+    /* ----------------------------------------------------- */
+
+    .card-body p {
+        font-size: 1.1rem;
+        padding: 5px 0;
+        border-bottom: 1px dashed #3b3054; /* خطوط فاصلة ناعمة بين البيانات */
+    }
+
+        /* Make the last line cleaner */
+        .card-body p:last-of-type {
+            border-bottom: none;
+            margin-bottom: 20px;
+        }
+
+        /* Data Labels (Strong tags) */
+        .card-body p strong {
+            color: #f0f0f0; /* أبيض ساطع لتسمية البيانات */
+            display: inline-block;
+            min-width: 120px; /* لتنسيق البيانات في عمود */
+            font-weight: 600;
+        }
+
+    /* Data Values */
+    .card-body p {
+        color: #cccccc; /* لون فاتح لقيم البيانات */
+    }
+
+    /* 4. Buttons Styling */
+    /* ----------------------------------------------------- */
+
+    /* Edit Profile Button (btn-primary) - Primary Neon Purple */
+    .btn-primary {
+        background-color: #6a0dad;
+        border-color: #6a0dad;
+        color: #ffffff;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-primary:hover {
+            background-color: #9333ea;
+            border-color: #9333ea;
+            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+        }
+
+    /* Change Password Button (btn-warning) - Secondary Neon Accent (e.g., Yellow/Orange glow) */
+    .btn-warning {
+        background-color: #f4d03f; /* لون أصفر/ذهبي للخيار الثانوي */
+        border-color: #f4d03f;
+        color: #1a1625;
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-warning:hover {
+            background-color: #f7e9b0;
+            border-color: #f7e9b0;
+            box-shadow: 0 0 15px rgba(244, 208, 63, 0.9); /* توهج أصفر */
+            color: #1a1625;
+        }</style>

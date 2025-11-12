@@ -1,47 +1,94 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@inject Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<dynamic> Html
+
+@{
+    // نجيب اسم الكنترولر والأكشن الحالي
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString()?.ToLower();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString()?.ToLower();
+
+    // نخبي الـ Navbar والـ Footer في صفحات تسجيل الدخول والتسجيل ونسيان الباسورد
+    bool isAuthPage = currentController == "account" &&
+                      (currentAction == "login" || currentAction == "register" || currentAction == "forgetpassword");
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - movie_hospital_1</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - Movie cinema </title>
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/movie_hospital_1.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">movie_hospital_1</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+    @if (!isAuthPage)
+    {
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+                <div class="container-fluid">
+                    <!-- Logo -->
+                    <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                        🎬 Movie cinema
+                    </a>
+
+                    <!-- Toggle button for mobile -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <!-- Navbar links -->
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>
+                        </ul>
+                        <a asp-controller="Account" asp-action="Profile" class="btn btn-outline-light ms-2">
+                            <i class="bi bi-person-circle"></i> Profile
+                        </a>
+                        <!-- زرار Login / Logout -->
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-flex">
+                                <button type="submit" class="btn btn-outline-light ms-2">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light ms-2">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </a>
+                        }
+                    </div>
+                    <a asp-controller="Orders" asp-action="UserOrders" class="btn btn-outline-light ms-2">
+                        <i class="bi bi-cart-fill"></i> CART
+                    </a>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
+            </nav>
+        </header>
+    }
+
+    <div class="container @(isAuthPage ? "p-0" : "")">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - movie_hospital_1 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+   
+
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

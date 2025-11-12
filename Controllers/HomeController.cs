@@ -1,3 +1,8 @@
+
+
+
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using movie_hospital_1.dataAccess;
 using movie_hospital_1.dataModel;
@@ -10,7 +15,6 @@ namespace movie_hospital_1.Controllers
 {
     public class HomeController : Controller
     {
-
         private readonly ILogger<HomeController> _logger;
         private readonly MovieRepository _MovieRepository;
         private readonly CategoryRepository _CategoryRepository;
@@ -32,9 +36,12 @@ namespace movie_hospital_1.Controllers
             _ActorRepository = actorRepository;
         }
 
-        public async Task<IActionResult> Index(CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> Index(string? search, int? categoryId, int? year, int pageNumber = 1, CancellationToken cancellationToken = default)
         {
-            var movies = await _MovieRepository.GetAsync(
+            int pageSize = 6;
+
+            var allMovies = await _MovieRepository.GetAsync(
                 includes: new Expression<Func<Movie, object>>[]
                 {
                     m => m.Category,
@@ -44,7 +51,25 @@ namespace movie_hospital_1.Controllers
                 cancellationToken: cancellationToken
             );
 
-            foreach (var movie in movies)
+            IEnumerable<Movie> filteredMovies = allMovies;
+
+            if (!string.IsNullOrWhiteSpace(search))
+                filteredMovies = filteredMovies.Where(m => m.Title.ToLower().Contains(search.ToLower()));
+
+            if (categoryId.HasValue)
+                filteredMovies = filteredMovies.Where(m => m.CategoryId == categoryId.Value);
+            int totalItems = filteredMovies.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageNumber > totalPages && totalPages > 0) pageNumber = totalPages;
+
+            var pagedMovies = filteredMovies
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            foreach (var movie in pagedMovies)
             {
                 foreach (var ma in movie.MovieActors)
                 {
@@ -55,7 +80,14 @@ namespace movie_hospital_1.Controllers
                 }
             }
 
-            return View(movies);
+            ViewBag.Categories = await _CategoryRepository.GetAsync(cancellationToken: cancellationToken);
+            ViewBag.Search = search;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.Year = year;
+            ViewBag.PageNumber = pageNumber;
+            ViewBag.TotalPages = totalPages;
+
+            return View(pagedMovies);
         }
 
         public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)

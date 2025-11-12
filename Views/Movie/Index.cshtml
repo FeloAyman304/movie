@@ -1,76 +1,237 @@
-﻿
+﻿@model IEnumerable<movie_hospital_1.dataModel.Movie>
 
+<div class="container-fluid mt-4">
+    <h2 class="text-center">🎬 Movies List</h2>
+    <a asp-action="Create" class="btn btn-primary mb-3">➕ Add Movie</a>
 
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Cinema</th>
+                    <th>Image</th>
+                    <th>Actors</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Title</td>
+                        <td>@item.Category?.Name</td>
+                        <td>@item.Cinema?.Name</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ImageURL))
+                            {
+                                <img src="@item.ImageURL" width="80" class="rounded shadow-sm" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">No Image</span>
+                            }
+                        </td>
 
+                        <td>
+                            @if (item.MovieActors != null && item.MovieActors.Any())
+                            {
+                                @foreach (var ma in item.MovieActors)
+                                {
+                                    @ma.Actor?.Name
+                                    <br />
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">No Actors</span>
+                            }
+                        </td>
 
-@model IEnumerable<movie_hospital_1.dataModel.Movie>
+                        <td class="price-cell">
+                            @item.Price.ToString("C")
+                        </td>
 
-<h2>🎬 Movies List</h2>
-<a asp-action="Create" class="btn btn-primary mb-3">➕ Add Movie</a>
+                        <td>
+                            @if (item.InCinema)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Not Active</span>
+                            }
+                        </td>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Cinema</th>
-            <th>Image</th>
-            <th>Actors</th>
-            <th>Status</th> 
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Title</td>
-                <td>@item.Category?.Name</td>
-                <td>@item.Cinema?.Name</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.ImageURL))
-                    {
-                        <img src="@item.ImageURL" width="80" class="rounded shadow-sm" />
-                    }
-                    else
-                    {
-                        <span class="text-muted">No Image</span>
-                    }
-                </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">✏ Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">🗑 Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
-                <td>
-                    @if (item.MovieActors != null && item.MovieActors.Any())
-                    {
-                        foreach (var ma in item.MovieActors)
-                        {
-                            @ma.Actor?.Name
-                
-                            <br />
-                        }
-                    }
-                    else
-                    {
-                        <span class="text-muted">No Actors</span>
-                    }
-                </td>
+<style>
+    /* -------------------------------------------------------------------------- */
+    /* التنسيقات (CSS) الموحدة - لا يوجد تغيير إلا في إضافة تنسيق لخلية السعر */
+    /* -------------------------------------------------------------------------- */
 
-                <td>
-                    @if (item.InCinema)
-                    {
-                        <span class="badge bg-success">Active</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Not Active</span>
-                    }
-                </td>
+    /* General Body Styling (Consistency with previous pages) */
+    body {
+        background-color: #0d0a17;
+        color: #f0f0f0;
+        font-family: 'Arial', sans-serif;
+        padding: 20px 0;
+    }
 
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">✏ Edit</a>
-        
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">🗑 Delete</a>
-                </td>
-            </tr>
+    /* Page Heading Styling */
+    h2 {
+        color: #d175ff; /* Bright purple/magenta for the main heading */
+        text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
+        text-align: center;
+        margin-bottom: 30px !important;
+    }
+
+    /* Add Movie Button (btn-primary) */
+    .btn-primary {
+        background-color: #6a0dad; /* Dark Purple primary color */
+        border-color: #6a0dad;
+        color: #ffffff;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+        .btn-primary:hover {
+            background-color: #9333ea;
+            border-color: #9333ea;
+            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
         }
-    </tbody>
-</table>
+
+    /* Table Styling */
+    .table {
+        background-color: #1a1625; /* Dark background for the entire table */
+        border: 1px solid #3b3054 !important;
+        color: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+        /* Table Header Styling (thead) */
+        .table thead {
+            background-color: #3b3054 !important;
+            border-bottom: 2px solid #6a0dad;
+        }
+
+        .table th {
+            color: #d175ff; /* Neon text color for column titles */
+            font-weight: bold;
+            text-transform: uppercase;
+            vertical-align: middle;
+            border-color: #3b3054;
+        }
+
+        /* Table Body Rows Styling (tbody) */
+        .table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+            .table tbody tr:hover {
+                background-color: #2b263b; /* Slightly lighter background on hover */
+            }
+
+        .table tbody td {
+            border-color: #3b3054;
+            vertical-align: middle;
+        }
+
+        /* Image Styling */
+        .table tbody img {
+            border-radius: 5px !important;
+            border: 2px solid #6a0dad; /* Neon frame around the image */
+            object-fit: cover;
+            height: 80px;
+            width: 60px; /* Movie poster aspect ratio */
+        }
+
+    .text-muted {
+        color: #9333ea !important;
+        font-style: italic;
+        font-size: 0.9rem;
+    }
+
+    /* Actors List Cell */
+    .table td:nth-child(5) {
+        max-width: 150px;
+        font-size: 0.9em;
+        line-height: 1.2;
+    }
+
+    /* تنسيق خلية السعر - NEW */
+    .price-cell {
+        font-weight: bold;
+        color: #ffcc00; /* لون ذهبي/أصفر */
+        text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+    }
+
+    /* Status Badges Styling */
+    .badge {
+        padding: 0.5em 0.8em;
+        font-size: 0.8em;
+        font-weight: bold;
+        border-radius: 10px;
+    }
+
+        /* Active Status Badge (bg-success) - Neon Green */
+        .badge.bg-success {
+            background-color: #39ff14 !important; /* Bright Neon Green */
+            color: #1a1625 !important;
+            text-shadow: 0 0 5px rgba(57, 255, 20, 0.8);
+        }
+
+        /* Not Active Status Badge (bg-secondary) - Dark Muted */
+        .badge.bg-secondary {
+            background-color: #3b3054 !important; /* Darker Muted Purple */
+            color: #f0f0f0 !important;
+        }
+
+    /* Actions Column Buttons */
+
+    /* Edit Button (btn-warning/Neon Purple) */
+    .btn-warning {
+        background-color: #d175ff;
+        border-color: #d175ff;
+        color: #1a1625 !important;
+        font-weight: bold;
+        border-radius: 5px;
+        margin-right: 5px;
+    }
+
+        .btn-warning:hover {
+            background-color: #e599ff;
+            border-color: #e599ff;
+        }
+
+    /* Delete Button (btn-danger/Red) */
+    .btn-danger {
+        background-color: #ff6666;
+        border-color: #ff6666;
+        color: #ffffff;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+
+        .btn-danger:hover {
+            background-color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+</style>
