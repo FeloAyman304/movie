@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace movie_hospital_1.Controllers
 {
-    [Authorize] // يتطلب تسجيل الدخول للحجز
     public class OrdersController : Controller
     {
         private readonly MovieRepository _MovieRepository;

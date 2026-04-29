@@ -1,166 +1,219 @@
-﻿
+﻿@{
+    Layout = null;
+}
 
 @model IEnumerable<movie_hospital_1.dataModel.Actor>
 
-<h2>🎭 Actors List</h2>
-<a asp-action="Create" class="btn btn-primary mb-3">➕ Add Actor</a>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Actors List</title>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Bio</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var actor in Model)
-        {
-            <tr>
-                <td>
-                    @if (!string.IsNullOrEmpty(actor.ProfilePicture))
-                    {
-                        <img src="@actor.ProfilePicture" alt="@actor.Name" width="80" height="80" class="rounded shadow" />
-                    }
-                    else
-                    {
-                        <span>No Image</span>
-                    }
-                </td>
-                <td>@actor.Name</td>
-                <td>@actor.Bio</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@actor.Id" class="btn btn-warning btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@actor.Id" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-<style>
-    /* General Body Styling (Consistency with previous pages) */
-    body {
-        background-color: #0d0a17;
-        color: #f0f0f0;
-        font-family: 'Arial', sans-serif;
-        padding: 20px 0;
-    }
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
-    /* Page Heading Styling */
-    h2 {
-        color: #d175ff; /* Bright purple/magenta for the main heading */
-        text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
-        text-align: center;
-        margin-bottom: 30px !important;
-    }
-
-    /* Add Actor Button (btn-primary is used for the Create action) */
-    .btn-primary {
-        background-color: #6a0dad; /* Dark Purple primary color */
-        border-color: #6a0dad;
-        color: #ffffff;
-        font-weight: bold;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-    }
-
-        .btn-primary:hover {
-            background-color: #9333ea;
-            border-color: #9333ea;
-            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+    <style>
+        body {
+            background-color: #0d0a17;
+            color: #f0f0f0;
+            font-family: Arial;
+            padding: 20px;
         }
 
-    /* Table Styling */
-    .table {
-        background-color: #1a1625; /* Dark background for the entire table */
-        border: 1px solid #3b3054 !important;
-        color: #f0f0f0; /* Light text color for table content */
-        border-radius: 10px;
-        overflow: hidden;
-        width: 100%;
-    }
-
-        /* Table Header Styling (thead) */
-        .table thead {
-            /* Use the dark header style for all table headers */
-            background-color: #3b3054 !important;
-            border-bottom: 2px solid #6a0dad;
+        h2 {
+            color: #d175ff;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
         }
 
-        .table th {
-            color: #d175ff; /* Neon text color for column titles */
+        .top-bar {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background-color: #6a0dad;
+            border: none;
             font-weight: bold;
-            text-transform: uppercase;
-            vertical-align: middle;
-            border-color: #3b3054;
         }
 
-        /* Table Body Rows Styling (tbody) */
-        .table tbody tr {
-            transition: background-color 0.3s ease;
-        }
-
-            .table tbody tr:hover {
-                background-color: #2b263b; /* Slightly lighter background on hover */
+            .btn-primary:hover {
+                background-color: #9333ea;
+                box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
             }
 
-        .table tbody td {
-            border-color: #3b3054; /* Consistent border color */
-            vertical-align: middle; /* Center cell content vertically */
-            /* Limiting Bio text length */
-            max-width: 300px;
+        .btn-secondary {
+            background-color: #3b3054;
+            border: none;
+            color: #f0f0f0;
+            font-weight: bold;
+            transition: 0.3s;
+            border-radius: 8px;
+        }
+
+            .btn-secondary:hover {
+                background-color: #4c406b;
+                box-shadow: 0 0 12px rgba(209, 117, 255, 0.6);
+                transform: translateY(-2px);
+            }
+
+        .search-box {
+            width: 250px;
+            border-radius: 8px;
+            padding: 6px;
+            border: 1px solid #6a0dad;
+            background-color: #1a1625;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+            background-color: #1a1625;
+            border-radius: 10px;
             overflow: hidden;
-            text-overflow: ellipsis;
         }
 
-        /* Actor Image Styling */
-        .table tbody img {
-            /* The image has classes 'rounded shadow' in HTML. We target <img> in <tbody> */
-            border-radius: 50% !important; /* Make profile pictures circular */
-            border: 3px solid #d175ff; /* Bright Neon border/frame */
+        thead {
+            background-color: #3b3054;
+        }
+
+        th {
+            color: #d175ff;
+            padding: 10px;
+        }
+
+        td {
+            padding: 10px;
+            border-top: 1px solid #3b3054;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #2b263b;
+        }
+
+        img {
+            width: 70px;
+            height: 70px;
             object-fit: cover;
-            width: 80px;
-            height: 80px;
-            box-shadow: 0 0 10px rgba(209, 117, 255, 0.5); /* Soft glow around the image */
+            border-radius: 50%;
+            border: 2px solid #d175ff;
         }
 
-        .table tbody span {
-            /* Style for "No Image" text */
-            color: #9333ea !important;
-            font-style: italic;
-            font-size: 0.9rem;
+        .btn-warning {
+            background-color: #d175ff;
+            border: none;
+            color: #1a1625;
+            font-weight: bold;
         }
 
-    /* Actions Column Buttons (Small size - btn-sm) */
-
-    /* Edit Button (btn-warning/Neon Purple) */
-    .btn-warning {
-        background-color: #d175ff;
-        border-color: #d175ff;
-        color: #1a1625 !important;
-        font-weight: bold;
-        border-radius: 5px;
-        margin-right: 5px;
-    }
-
-        .btn-warning:hover {
-            background-color: #e599ff;
-            border-color: #e599ff;
-        }
-
-    /* Delete Button (btn-danger/Red) */
-    .btn-danger {
-        background-color: #ff6666;
-        border-color: #ff6666;
-        color: #ffffff;
-        font-weight: bold;
-        border-radius: 5px;
-    }
-
-        .btn-danger:hover {
+        .btn-danger {
             background-color: #ff4d4d;
-            border-color: #ff4d4d;
+            border: none;
         }
-</style>
+
+            .btn-warning:hover,
+            .btn-danger:hover {
+                transform: scale(1.05);
+            }
+    </style>
+</head>
+
+<body>
+
+    <h2>🎭 Actors List</h2>
+
+    <div class="top-bar">
+
+        <div>
+            <a asp-action="Create" class="btn btn-primary">➕ Add Actor</a>
+
+            <a href="/Admin/Dashboard" class="btn btn-secondary ms-2">
+                ⬅ Back to Dashboard
+            </a>
+        </div>
+
+        <input type="text" id="search" class="search-box" placeholder="Search actor..." />
+
+    </div>
+
+    <table id="actorsTable">
+
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Bio</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var actor in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(actor.ProfilePicture))
+                        {
+                            <img src="@actor.ProfilePicture" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
+                    </td>
+
+                    <td class="name">@actor.Name</td>
+                    <td>@actor.Bio</td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@actor.Id"
+                           class="btn btn-warning btn-sm">Edit</a>
+
+                        <a asp-action="Delete" asp-route-id="@actor.Id"
+                           class="btn btn-danger btn-sm delete-btn">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const search = document.getElementById("search");
+            const rows = document.querySelectorAll("#actorsTable tbody tr");
+
+            search.addEventListener("input", function () {
+                const value = this.value.toLowerCase();
+
+                rows.forEach(row => {
+                    const name = row.querySelector(".name").textContent.toLowerCase();
+                    row.style.display = name.includes(value) ? "" : "none";
+                });
+            });
+
+            const deletes = document.querySelectorAll(".delete-btn");
+
+            deletes.forEach(btn => {
+                btn.addEventListener("click", function (e) {
+                    const ok = confirm("Are you sure you want to delete this actor?");
+                    if (!ok) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>

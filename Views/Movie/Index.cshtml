@@ -1,8 +1,20 @@
 ﻿@model IEnumerable<movie_hospital_1.dataModel.Movie>
 
+@{
+    Layout = null;
+}
+
 <div class="container-fluid mt-4">
     <h2 class="text-center">🎬 Movies List</h2>
-    <a asp-action="Create" class="btn btn-primary mb-3">➕ Add Movie</a>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a asp-action="Create" class="btn btn-primary">➕ Add Movie</a>
+
+        <!-- 🔙 زرار الرجوع للـ Dashboard -->
+        <a href="/Admin/Dashboard" class="btn btn-outline-light">
+            ⬅ Back to Dashboard
+        </a>
+    </div>
 
     <div class="table-responsive">
         <table class="table table-bordered">
@@ -18,6 +30,7 @@
                     <th>Actions</th>
                 </tr>
             </thead>
+
             <tbody>
                 @foreach (var item in Model)
                 {
@@ -25,6 +38,7 @@
                         <td>@item.Title</td>
                         <td>@item.Category?.Name</td>
                         <td>@item.Cinema?.Name</td>
+
                         <td>
                             @if (!string.IsNullOrEmpty(item.ImageURL))
                             {
@@ -41,8 +55,7 @@
                             {
                                 @foreach (var ma in item.MovieActors)
                                 {
-                                    @ma.Actor?.Name
-                                    <br />
+                                    @ma.Actor?.Name <br />
                                 }
                             }
                             else
@@ -78,160 +91,51 @@
 </div>
 
 <style>
-    /* -------------------------------------------------------------------------- */
-    /* التنسيقات (CSS) الموحدة - لا يوجد تغيير إلا في إضافة تنسيق لخلية السعر */
-    /* -------------------------------------------------------------------------- */
-
-    /* General Body Styling (Consistency with previous pages) */
     body {
         background-color: #0d0a17;
         color: #f0f0f0;
-        font-family: 'Arial', sans-serif;
-        padding: 20px 0;
+        font-family: Arial;
+        padding: 20px;
     }
 
-    /* Page Heading Styling */
     h2 {
-        color: #d175ff; /* Bright purple/magenta for the main heading */
+        color: #d175ff;
         text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
-        text-align: center;
-        margin-bottom: 30px !important;
     }
 
-    /* Add Movie Button (btn-primary) */
     .btn-primary {
-        background-color: #6a0dad; /* Dark Purple primary color */
-        border-color: #6a0dad;
-        color: #ffffff;
+        background-color: #6a0dad;
+        border: none;
         font-weight: bold;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-        border-radius: 8px;
     }
 
-        .btn-primary:hover {
-            background-color: #9333ea;
-            border-color: #9333ea;
-            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
-        }
+    .btn-outline-light {
+        border: 1px solid #fff;
+        color: #fff;
+    }
 
-    /* Table Styling */
     .table {
-        background-color: #1a1625; /* Dark background for the entire table */
-        border: 1px solid #3b3054 !important;
-        color: #f0f0f0;
-        border-radius: 10px;
-        overflow: hidden;
-        width: 100%;
-        margin-top: 20px;
+        background-color: #1a1625;
+        color: white;
     }
 
-        /* Table Header Styling (thead) */
-        .table thead {
-            background-color: #3b3054 !important;
-            border-bottom: 2px solid #6a0dad;
-        }
-
-        .table th {
-            color: #d175ff; /* Neon text color for column titles */
-            font-weight: bold;
-            text-transform: uppercase;
-            vertical-align: middle;
-            border-color: #3b3054;
-        }
-
-        /* Table Body Rows Styling (tbody) */
-        .table tbody tr {
-            transition: background-color 0.3s ease;
-        }
-
-            .table tbody tr:hover {
-                background-color: #2b263b; /* Slightly lighter background on hover */
-            }
-
-        .table tbody td {
-            border-color: #3b3054;
-            vertical-align: middle;
-        }
-
-        /* Image Styling */
-        .table tbody img {
-            border-radius: 5px !important;
-            border: 2px solid #6a0dad; /* Neon frame around the image */
-            object-fit: cover;
-            height: 80px;
-            width: 60px; /* Movie poster aspect ratio */
-        }
-
-    .text-muted {
-        color: #9333ea !important;
-        font-style: italic;
-        font-size: 0.9rem;
+    .table thead {
+        background-color: #3b3054;
     }
 
-    /* Actors List Cell */
-    .table td:nth-child(5) {
-        max-width: 150px;
-        font-size: 0.9em;
-        line-height: 1.2;
-    }
-
-    /* تنسيق خلية السعر - NEW */
     .price-cell {
+        color: gold;
         font-weight: bold;
-        color: #ffcc00; /* لون ذهبي/أصفر */
-        text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
     }
 
-    /* Status Badges Styling */
-    .badge {
-        padding: 0.5em 0.8em;
-        font-size: 0.8em;
-        font-weight: bold;
-        border-radius: 10px;
-    }
-
-        /* Active Status Badge (bg-success) - Neon Green */
-        .badge.bg-success {
-            background-color: #39ff14 !important; /* Bright Neon Green */
-            color: #1a1625 !important;
-            text-shadow: 0 0 5px rgba(57, 255, 20, 0.8);
-        }
-
-        /* Not Active Status Badge (bg-secondary) - Dark Muted */
-        .badge.bg-secondary {
-            background-color: #3b3054 !important; /* Darker Muted Purple */
-            color: #f0f0f0 !important;
-        }
-
-    /* Actions Column Buttons */
-
-    /* Edit Button (btn-warning/Neon Purple) */
     .btn-warning {
         background-color: #d175ff;
-        border-color: #d175ff;
-        color: #1a1625 !important;
-        font-weight: bold;
-        border-radius: 5px;
-        margin-right: 5px;
+        border: none;
+        color: #1a1625;
     }
 
-        .btn-warning:hover {
-            background-color: #e599ff;
-            border-color: #e599ff;
-        }
-
-    /* Delete Button (btn-danger/Red) */
     .btn-danger {
-        background-color: #ff6666;
-        border-color: #ff6666;
-        color: #ffffff;
-        font-weight: bold;
-        border-radius: 5px;
+        background-color: #ff4d4d;
+        border: none;
     }
-
-        .btn-danger:hover {
-            background-color: #ff4d4d;
-            border-color: #ff4d4d;
-        }
 </style>

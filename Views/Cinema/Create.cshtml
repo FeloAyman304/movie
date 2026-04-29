@@ -1,126 +1,156 @@
-﻿
+﻿@{
+    Layout = null;
+}
+
 @model movie_hospital_1.dataModel.Cinema
 
-<h2 class="mb-4 text-center">🎞 Add New Cinema</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Add Cinema</title>
 
-<form asp-action="Create" method="post" enctype="multipart/form-data">
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label">Cinema Name</label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Location"></label>
-        <input asp-for="Location" class="form-control" />
-        <span asp-validation-for="Location" class="text-danger"></span>
-    </div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
-
-
-    <div class="mb-3">
-        <label class="form-label">Cinema Image</label>
-        <input type="file" name="ImageFile" class="form-control" accept="image/*" />
-    </div>
-
-    <button type="submit" class="btn btn-success">💾 Save</button>
-    <a asp-action="Index" class="btn btn-secondary">⬅ Back</a>
-</form>
-
-<style>
-    /* General Body Styling (Consistency) */
-    body {
-        background-color: #0d0a17;
-        color: #f0f0f0;
-        font-family: 'Arial', sans-serif;
-        padding: 20px;
-    }
-
-    /* Page Heading Styling */
-    h2.mb-4.text-center {
-        color: #d175ff; /* Bright purple/magenta for the main heading */
-        text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
-        margin-bottom: 30px !important;
-    }
-
-    /* Form Container Styling (Targeting the form element)
-       NOTE: It is highly recommended to wrap the form in a centered <div> with class 'card' or similar.
-       If you wrap it in a card, use the styles for '.card' from previous responses. */
-    form {
-        max-width: 500px;
-        margin: 0 auto;
-        padding: 30px;
-        background-color: #1a1625; /* Dark background for the form area */
-        border: 1px solid #6a0dad;
-        border-radius: 12px;
-        box-shadow: 0 0 20px rgba(106, 13, 173, 0.7), 0 0 5px rgba(106, 13, 173, 0.5); /* Neon glow */
-    }
-
-    /* Label Styling */
-    .form-label,
-    label { /* Targeting both form-label and generic label for the Location field */
-        color: #d175ff; /* Bright purple for labels */
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-
-    /* Input/Textarea/File Field Styling */
-    .form-control {
-        background-color: #2b263b;
-        border: 1px solid #6a0dad;
-        color: #ffffff;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-    }
-
-    /* File Input Specific Styling (to make it look consistent) */
-    input[type="file"].form-control {
-        padding-top: 10px; /* Adjust padding for file input text */
-    }
-
-    /* Focus State */
-    .form-control:focus {
-        background-color: #3f3952;
-        border-color: #d175ff;
-        box-shadow: 0 0 8px rgba(209, 117, 255, 0.9);
-        color: #ffffff;
-    }
-
-    /* Validation Text Styling */
-    .text-danger {
-        color: #ff6666 !important;
-        font-weight: bold;
-    }
-
-    /* Save Button (btn-success) - Primary Purple */
-    .btn-success {
-        background-color: #6a0dad;
-        border-color: #6a0dad;
-        color: #ffffff;
-        font-weight: bold;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-    }
-
-        .btn-success:hover {
-            background-color: #9333ea;
-            border-color: #9333ea;
-            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+    <style>
+        body {
+            background-color: #0d0a17;
+            color: #f0f0f0;
+            font-family: Arial;
+            padding: 20px;
         }
 
-    /* Back Button (btn-secondary) */
-    .btn-secondary {
-        background-color: #3b3054;
-        border-color: #3b3054;
-        color: #f0f0f0;
-        font-weight: 500;
-        border-radius: 8px;
-        margin-left: 10px;
-    }
-
-        .btn-secondary:hover {
-            background-color: #4c406b;
-            border-color: #4c406b;
+        h2 {
+            color: #d175ff;
+            text-align: center;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
         }
-</style>
+
+        form {
+            max-width: 520px;
+            margin: auto;
+            background-color: #1a1625;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #6a0dad;
+            box-shadow: 0 0 20px rgba(106, 13, 173, 0.6);
+        }
+
+        label {
+            color: #d175ff;
+            font-weight: bold;
+        }
+
+        .form-control {
+            background-color: #2b263b;
+            border: 1px solid #6a0dad;
+            color: white;
+            border-radius: 8px;
+        }
+
+            .form-control:focus {
+                background-color: #3a3350;
+                border-color: #d175ff;
+                box-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
+                color: white;
+            }
+
+        .btn-success {
+            background-color: #6a0dad;
+            border: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+            .btn-success:hover {
+                background-color: #9333ea;
+                box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+            }
+
+        .btn-secondary {
+            background-color: #3b3054;
+            border: none;
+        }
+
+            .btn-secondary:hover {
+                background-color: #4c406b;
+            }
+
+        .error {
+            color: #ff4d4d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>🎞 Add New Cinema</h2>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="cinemaForm">
+
+        <div class="mb-3">
+            <label>Name</label>
+            <input asp-for="Name" class="form-control" id="name" />
+            <span asp-validation-for="Name" class="error"></span>
+        </div>
+
+        <div class="mb-3">
+            <label>Location</label>
+            <input asp-for="Location" class="form-control" id="location" />
+            <span asp-validation-for="Location" class="error"></span>
+        </div>
+
+        <div class="mb-3">
+            <label>Image</label>
+            <input type="file" name="ImageFile" class="form-control" />
+        </div>
+
+        <div class="d-flex justify-content-between">
+
+            <a asp-action="Index" class="btn btn-secondary px-4">
+                ⬅ Back
+            </a>
+
+            <button type="submit" class="btn btn-success px-4">
+                💾 Save
+            </button>
+
+        </div>
+
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const form = document.getElementById("cinemaForm");
+            const name = document.getElementById("name");
+            const location = document.getElementById("location");
+
+            function validateField(field) {
+                field.style.borderColor = field.value.trim() === "" ? "red" : "#d175ff";
+            }
+
+            name.addEventListener("input", () => validateField(name));
+            location.addEventListener("input", () => validateField(location));
+
+            form.addEventListener("submit", function (e) {
+
+                if (name.value.trim() === "" || location.value.trim() === "") {
+                    alert("Please fill all required fields!");
+                    e.preventDefault();
+                    return;
+                }
+
+                const ok = confirm("Are you sure you want to add this cinema?");
+                if (!ok) {
+                    e.preventDefault();
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>

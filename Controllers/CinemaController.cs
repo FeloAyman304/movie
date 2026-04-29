@@ -2,11 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using movie_hospital_1.dataModel;
 using movie_hospital_1.Reposotories.IReposotories;
-using movie_hospital_1.Utilities;
 
 namespace movie_hospital_1.Controllers
 {
-    [Authorize(Roles = $"{SD.ROLE_ADMIN},{SD.ROLE_SUPER_ADMIN}")]
     public class CinemaController : Controller
     {
         private readonly IRepossitory<Cinema> _cinemaRepository;

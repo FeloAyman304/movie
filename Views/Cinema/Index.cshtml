@@ -1,164 +1,186 @@
-﻿
-
-
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Cinema List";
+}
 
 @model IEnumerable<movie_hospital_1.dataModel.Cinema>
 
-<h2 class="mb-4 text-center">🎬 Cinema List</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Cinema List</title>
 
-<a asp-action="Create" class="btn btn-success mb-3">➕ Add New Cinema</a>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
-<table class="table table-striped table-bordered text-center align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th>Image</th>
-            <th>Name</th>
-          <th>Location</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.ImageURL))
-                    {
-                        <img src="@item.ImageURL" class="imgCinema" width="80" alt="Cinema Image" />
-                    }
-                    else
-                    {
-                        <span class="text-muted">No Image</span>
-                    }
-                </td>
-                <td>@item.Name</td>
-                <td>@item.Location</td>
-             
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">✏️ Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">🗑 Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<style>
-    /* General Body Styling (Consistency with previous pages) */
-    body {
-        background-color: #0d0a17;
-        color: #f0f0f0;
-        font-family: 'Arial', sans-serif;
-        padding: 20px 0;
-    }
-
-    /* Page Heading Styling */
-    h2.mb-4.text-center {
-        color: #d175ff; /* Bright purple/magenta for the main heading */
-        text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
-        margin-bottom: 30px !important;
-    }
-
-    /* Add New Cinema Button (btn-success is used for the Create action) */
-    .btn-success {
-        background-color: #6a0dad; /* Dark Purple primary color */
-        border-color: #6a0dad;
-        color: #ffffff;
-        font-weight: bold;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        /* Ensure consistency for all btn-success in the list view */
-    }
-
-        .btn-success:hover {
-            background-color: #9333ea;
-            border-color: #9333ea;
-            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+    <style>
+        body {
+            background-color: #0d0a17;
+            color: #f0f0f0;
+            font-family: Arial;
+            padding: 20px;
         }
 
-    /* Table Styling */
-    .table {
-        background-color: #1a1625; /* Dark background for the entire table */
-        border: 1px solid #3b3054 !important;
-        color: #f0f0f0; /* Light text color for table content */
-        border-radius: 10px;
-        overflow: hidden;
-        width: 100%; /* Ensure full width */
-    }
+        h2 {
+            color: #d175ff;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
+        }
 
-    /* Table Header Styling (thead) */
-    .table-dark {
-        /* Override Bootstrap's table-dark for a neon look */
-        background-color: #3b3054 !important;
-        border-bottom: 2px solid #6a0dad;
-    }
+        .top-bar {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
 
-        .table-dark th {
-            color: #d175ff; /* Neon text color for column titles */
+        .btn-success {
+            background-color: #6a0dad;
+            border: none;
             font-weight: bold;
+        }
+
+            .btn-success:hover {
+                background-color: #9333ea;
+                box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
+            }
+
+        .btn-secondary {
+            background-color: #3b3054;
+            border: none;
+            color: #f0f0f0;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+
+            .btn-secondary:hover {
+                background-color: #4c406b;
+                box-shadow: 0 0 12px rgba(209, 117, 255, 0.6);
+            }
+
+        table {
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+            background-color: #1a1625;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: #3b3054;
+        }
+
+        th {
+            color: #d175ff;
+            padding: 10px;
             text-transform: uppercase;
-            vertical-align: middle; /* Center text vertically */
         }
 
-    /* Table Body Rows Styling (tbody) */
-    .table tbody tr {
-        transition: background-color 0.3s ease;
-    }
-
-        .table tbody tr:hover {
-            background-color: #2b263b; /* Slightly lighter background on hover */
+        td {
+            padding: 10px;
+            border-top: 1px solid #3b3054;
+            vertical-align: middle;
         }
 
-    .table tbody td {
-        border-color: #3b3054; /* Consistent border color */
-        vertical-align: middle; /* Center cell content vertically */
-    }
-
-    /* Image Styling */
-    .imgCinema {
-        border-radius: 8px; /* Rounded corners for images */
-        border: 2px solid #6a0dad; /* Neon frame around the image */
-        object-fit: cover; /* Ensures image covers the space without distortion */
-        height: 60px; /* Fixed height for consistency */
-        width: 80px; /* Fixed width */
-    }
-
-    .text-muted {
-        /* Style for "No Image" text */
-        color: #9333ea !important;
-        font-style: italic;
-        font-size: 0.9rem;
-    }
-
-    /* Actions Column Buttons */
-
-    /* Edit Button (btn-warning/Neon Purple) */
-    .btn-warning {
-        background-color: #d175ff; /* Bright Neon Purple */
-        border-color: #d175ff;
-        color: #1a1625 !important;
-        font-weight: bold;
-        border-radius: 5px;
-        margin-right: 5px;
-    }
-
-        .btn-warning:hover {
-            background-color: #e599ff;
-            border-color: #e599ff;
+        tr:hover {
+            background-color: #2b263b;
         }
 
-    /* Delete Button (btn-danger/Red) */
-    .btn-danger {
-        background-color: #ff6666; /* Bright Red for danger */
-        border-color: #ff6666;
-        color: #ffffff;
-        font-weight: bold;
-        border-radius: 5px;
-    }
+        .imgCinema {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #6a0dad;
+        }
 
-        .btn-danger:hover {
+        .btn-warning {
+            background-color: #d175ff;
+            border: none;
+            color: #1a1625;
+            font-weight: bold;
+        }
+
+        .btn-danger {
             background-color: #ff4d4d;
-            border-color: #ff4d4d;
+            border: none;
         }
-</style>
+
+            .btn-warning:hover,
+            .btn-danger:hover {
+                transform: scale(1.05);
+            }
+
+        .text-muted {
+            color: #9333ea !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>🎬 Cinema List</h2>
+
+    <div class="top-bar">
+
+        <div>
+            <a asp-action="Create" class="btn btn-success">
+                ➕ Add New Cinema
+            </a>
+        </div>
+
+        <a href="/Admin/Dashboard" class="btn btn-secondary">
+            ⬅ Dashboard
+        </a>
+
+    </div>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImageURL))
+                        {
+                            <img src="@item.ImageURL" class="imgCinema" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Image</span>
+                        }
+                    </td>
+
+                    <td>@item.Name</td>
+                    <td>@item.Location</td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                            ✏ Edit
+                        </a>
+
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
+                            🗑 Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+</body>
+</html>

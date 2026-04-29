@@ -1,419 +1,209 @@
 ﻿@model IEnumerable<movie_hospital_1.dataModel.Movie>
+
 @{
     ViewData["Title"] = "Movies List";
+    Layout = null;
 }
 
-<div class="container mt-4">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
 
-    <h2 class="mb-4 text-center text-neon">🎬 Movies List</h2>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <form method="get" asp-action="Index" class="row g-2 align-items-center mb-5 p-3 filter-box">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-        <div class="col-md-4">
-            <input type="text" name="search" class="form-control"
-                   placeholder="Search by movie title..."
-                   value="@ViewBag.Search" />
-        </div>
+    <style>
+        body {
+            background-color: #0d0a17;
+            color: #f0f0f0;
+            font-family: Arial;
+        }
 
-        <div class="col-md-3">
-            <select name="categoryId" class="form-select filter-select">
-                <option value="">-- All Categories --</option>
-                @if (ViewBag.Categories != null)
-                {
-                    foreach (var category in ViewBag.Categories)
-                    {
-                        <option value="@category.Id"
-                                selected="@(ViewBag.CategoryId != null && ViewBag.CategoryId == category.Id)">
-                            @category.Name
-                        </option>
-                    }
+        .text-neon {
+            color: #d175ff;
+            text-shadow: 0 0 8px #d175ff;
+            font-weight: bold;
+        }
+
+        .navbar-custom {
+            background: #1a1625;
+            padding: 10px;
+            position: relative;
+        }
+
+        .dropdown-menu-custom {
+            display: none;
+            position: absolute;
+            right: 20px;
+            top: 60px;
+            background: #1a1625;
+            border: 1px solid #3b3054;
+            border-radius: 10px;
+            min-width: 180px;
+            box-shadow: 0 0 15px rgba(209,117,255,0.4);
+            z-index: 999;
+        }
+
+            .dropdown-menu-custom.show {
+                display: block;
+            }
+
+            .dropdown-menu-custom a {
+                display: block;
+                padding: 10px;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+            }
+
+                .dropdown-menu-custom a:hover {
+                    background: #6a0dad;
                 }
-            </select>
+
+        .card {
+            background: #1a1625;
+            border: 1px solid #3b3054;
+            transition: 0.3s;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 0 20px #d175ff;
+            }
+
+        .card-title {
+            color: white;
+        }
+
+        .btn-info {
+            background: #d175ff;
+            border: none;
+            color: white;
+        }
+
+        .btn-book {
+            background: #39ff14;
+            border: none;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar-custom d-flex align-items-center justify-content-between">
+
+        <h4 class="text-neon m-0">🎬 Movies App</h4>
+
+        <button class="btn btn-dark" id="menuBtn">Menu ▼</button>
+
+        <div class="dropdown-menu-custom" id="dropdownMenu">
+            <a href="/Home/Index">Home</a>
+            <a href="/Admin/Dashboard">Dashboard</a>
         </div>
 
-        <div class="col-md-3">
-            <select name="year" class="form-select filter-select">
-                <option value="">-- All Years --</option>
-                @{
-                    int currentYear = DateTime.Now.Year;
-                    for (int y = currentYear; y >= currentYear - 20; y--)
+    </div>
+
+    <div class="container mt-4">
+
+        <h2 class="text-center text-neon mb-4">🎬 Movies List</h2>
+
+        <!-- FILTER -->
+        <form method="get" asp-action="Index" class="row mb-4">
+
+            <div class="col-md-5">
+                <input type="text" name="search" class="form-control"
+                       placeholder="Search movies..." value="@ViewBag.Search" />
+            </div>
+
+            <div class="col-md-3">
+                <select name="categoryId" class="form-select">
+                    <option value="">All Categories</option>
+                    @foreach (var c in ViewBag.Categories)
                     {
-                        <option value="@y" selected="@(ViewBag.Year != null && ViewBag.Year == y)">@y</option>
+                        <option value="@c.Id">@c.Name</option>
                     }
-                }
-            </select>
-        </div>
+                </select>
+            </div>
 
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100">Filter</button>
+            </div>
 
-        <div class="col-md-2 text-end">
-            <button type="submit" class="btn btn-primary w-100 btn-filter-neon">
-                <i class="bi bi-funnel"></i> Filter
-            </button>
-        </div>
-    </form>
+        </form>
 
-    <div class="row">
-        @if (Model.Any())
-        {
-            foreach (var movie in Model)
+        <!-- MOVIES -->
+        <div class="row">
+
+            @foreach (var movie in Model)
             {
                 <div class="col-md-4 mb-4">
-                    <div class="card shadow-lg border-0 position-relative h-100">
-                        <img src="@movie.ImageURL" class="card-img-top" alt="@movie.Title" style="height: 350px; object-fit: cover;">
 
-                        <span class="badge bg-primary position-absolute top-0 end-0 m-2">
-                            @movie.Category?.Name
-                        </span>
+                    <div class="card h-100">
 
-                        <div class="card-body d-flex flex-column">
+                        <img src="@movie.ImageURL" class="card-img-top" style="height:300px; object-fit:cover;" />
+
+                        <div class="card-body">
+
                             <h5 class="card-title">@movie.Title</h5>
-                            <div class="card-text-box">
-                                <p class="card-text text-muted">@movie.Description</p>
-                            </div>
 
-                            <p class="mb-1"><strong>Price:</strong> $@movie.Price</p>
-                            <p class="mb-1"><strong>Cinema:</strong> @movie.Cinema?.Name</p>
+                            <p style="color:white">@movie.Description</p>
 
-                            <p class="mb-3">
-                                <strong>Actors:</strong>
-                                @if (movie.MovieActors != null && movie.MovieActors.Any())
-                                {
-                                    @string.Join(", ", movie.MovieActors.Select(m => m.Actor?.Name))
-                                }
-                                else
-                                {
-                                    <span class="text-muted">No actors</span>
-                                }
-                            </p>
+                            <p style="color:white"><strong >Price:</strong> @movie.Price</p>
 
-                         
-                            <div class="d-flex mt-auto pt-3 gap-2">
+                            <div class="d-flex gap-2">
 
-                                <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.Id"
-                                   class="btn btn-info flex-grow-1">
+                                <a asp-action="Details" asp-route-id="@movie.Id"
+                                   class="btn btn-info w-50">
                                     Details
                                 </a>
 
                                 @if (movie.InCinema)
                                 {
-                                    <a asp-controller="Orders" asp-action="Book" asp-route-movieId="@movie.Id"
-                                       class="btn btn-success btn-book-neon flex-grow-1">
-                                        <i class="bi bi-ticket-fill"></i> Book Now
+                                    <a asp-controller="Orders" asp-action="Book"
+                                       asp-route-movieId="@movie.Id"
+                                       class="btn btn-book w-50">
+                                        Book
                                     </a>
                                 }
                                 else
                                 {
-                                    <button class="btn btn-secondary flex-grow-1" disabled>
-                                        Sold Out
-                                    </button>
+                                    <button class="btn btn-secondary w-50" disabled>Sold Out</button>
                                 }
+
                             </div>
-                 
 
                         </div>
+
                     </div>
+
                 </div>
             }
-        }
-        else
-        {
-            <div class="col-12">
-                <div class="alert alert-warning text-center alert-neon-warning">
-                    No movies found with the selected filters.
-                </div>
-            </div>
-        }
+
+        </div>
+
     </div>
 
-    @{
-        int pageNumber = ViewBag.PageNumber ?? 1;
-        int totalPages = ViewBag.TotalPages ?? 1;
-        string currentSearch = ViewBag.Search;
-        int? currentCategoryId = ViewBag.CategoryId;
-        int? currentYear = ViewBag.Year;
-    }
+    
+    <script>
+        const menuBtn = document.getElementById("menuBtn");
+        const dropdown = document.getElementById("dropdownMenu");
 
-    @if (totalPages > 1)
-    {
-        <nav aria-label="Movies Pagination" class="d-flex justify-content-center mt-5">
-            <ul class="pagination pagination-neon">
+        menuBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            dropdown.classList.toggle("show");
+        });
 
-                <li class="page-item @(pageNumber <= 1 ? "disabled" : "")">
-                    <a class="page-link"
-                       href="@Url.Action("Index", new { pageNumber = pageNumber - 1, search = currentSearch, categoryId = currentCategoryId, year = currentYear })"
-                       aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
+        document.addEventListener("click", function () {
+            dropdown.classList.remove("show");
+        });
+    </script>
 
-                @for (int i = 1; i <= totalPages; i++)
-                {
-                    <li class="page-item @(i == pageNumber ? "active" : "")">
-                        <a class="page-link"
-                           href="@Url.Action("Index", new { pageNumber = i, search = currentSearch, categoryId = currentCategoryId, year = currentYear })">
-                            @i
-                        </a>
-                    </li>
-                }
-
-                <li class="page-item @(pageNumber >= totalPages ? "disabled" : "")">
-                    <a class="page-link"
-                       href="@Url.Action("Index", new { pageNumber = pageNumber + 1, search = currentSearch, categoryId = currentCategoryId, year = currentYear })"
-                       aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    }
-</div>
-
-@section Scripts {
-    <partial name="_NotificationPartial" />
-}
-
-<style>
-    /* ----------------------------------------------------- */
-    /* I. General Body & Neon Typography */
-    /* ----------------------------------------------------- */
-    body {
-        background-color: #0d0a17 !important; /* خلفية داكنة جداً */
-        color: #f0f0f0 !important; /* لون الخط الأساسي فاتح */
-        font-family: 'Open Sans', sans-serif;
-    }
-
-    .text-neon {
-        color: #d175ff; /* اللون الأرجواني للنيون */
-        text-shadow: 0 0 5px #d175ff, 0 0 10px #d175ff; /* توهج النص */
-        font-weight: 700;
-    }
-
-    /* ----------------------------------------------------- */
-    /* II. Filter Section Styling (Top Bar) */
-    /* ----------------------------------------------------- */
-
-    .filter-box {
-        background-color: #1a1625; /* خلفية أغمق قليلاً من الخلفية العامة */
-        border: 1px solid #3b3054;
-        border-radius: 12px;
-        box-shadow: 0 0 15px rgba(106, 13, 173, 0.3); /* ظل نيون خفيف */
-    }
-
-    /* Common style for Input and Select fields */
-    .form-control, .form-select.filter-select {
-        background-color: #2b263b;
-        border: 1px solid #6a0dad;
-        color: #ffffff;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        height: 45px;
-    }
-
-    /* Arrow color for select dropdown */
-    .form-select.filter-select {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23d175ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-    }
-
-        .form-control:focus, .form-select.filter-select:focus {
-            background-color: #3f3952;
-            border-color: #d175ff;
-            box-shadow: 0 0 8px rgba(209, 117, 255, 0.9);
-            color: #ffffff;
-            outline: none;
-        }
-
-        .form-select.filter-select option {
-            background-color: #1a1625;
-            color: #f0f0f0;
-        }
-
-    /* Filter Button Styling */
-    .btn-filter-neon {
-        background-color: #6a0dad;
-        border-color: #6a0dad;
-        color: #ffffff;
-        font-weight: bold;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-    }
-
-        .btn-filter-neon:hover {
-            background-color: #9333ea;
-            border-color: #9333ea;
-            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
-        }
-
-    /* Alert style for No Movies Found */
-    .alert-neon-warning {
-        background-color: #3f3952;
-        color: #ff6666 !important;
-        border-color: #ff6666;
-        border-radius: 10px;
-        padding: 15px;
-        margin-top: 20px;
-    }
-
-    /* ----------------------------------------------------- */
-    /* III. Card Styling (Movie Cards) */
-    /* ----------------------------------------------------- */
-
-    .card.shadow-lg {
-        background-color: #1a1625;
-        border: 1px solid #3b3054;
-        border-radius: 12px;
-        overflow: hidden;
-        transition: all 0.4s ease;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    }
-
-        .card.shadow-lg:hover {
-            border-color: #d175ff;
-            box-shadow: 0 0 25px rgba(209,117,255,0.7); /* توهج نيون عند التمرير */
-            transform: translateY(-5px);
-        }
-
-    .card-img-top {
-        border-bottom: 2px solid #3b3054;
-        object-fit: cover;
-        opacity: 0.85;
-        transition: opacity 0.4s ease;
-    }
-
-    .card.shadow-lg:hover .card-img-top {
-        opacity: 1;
-    }
-
-    .badge.bg-primary {
-        background-color: #6a0dad !important;
-        color: #ffffff !important;
-        padding: 6px 10px;
-        border-radius: 6px;
-        font-weight: 600;
-    }
-
-    .card-body {
-        padding: 20px;
-    }
-
-    .card-title {
-        color: #d175ff; /* لون نيون للعناوين */
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-        font-weight: 700;
-    }
-
-    .card-text-box {
-        height: 75px; /* ارتفاع ثابت لضمان اتساق البطاقات */
-    }
-
-    .card-text.text-muted {
-        color: white !important; /* لون وصف الفيلم */
-        height: 60px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        margin-bottom: 15px;
-    }
-
-    .card-body strong {
-        color: #f0f0f0;
-        font-weight: 600;
-    }
-
-    .card-body p {
-        font-size: 0.95rem;
-        color: #cccccc;
-    }
-
-    /* ----------------------------------------------------- */
-    /* IV. Button Styling (Details and Book Now) */
-    /* ----------------------------------------------------- */
-
-    .card-body .d-flex.mt-auto {
-        margin-top: 15px !important;
-    }
-
-        .card-body .d-flex.mt-auto a, .card-body .d-flex.mt-auto button {
-            flex-basis: 50%; /* ضمان تقسيم الأزرار للمساحة بالتساوي */
-        }
-
-    .btn-info { /* زر التفاصيل */
-        background-color: #d175ff;
-        border-color: #d175ff;
-        color: #1a1625 !important;
-        font-weight: bold;
-        border-radius: 6px;
-        padding: 8px 20px;
-        transition: all 0.3s ease;
-    }
-
-        .btn-info:hover {
-            background-color: #e599ff;
-            border-color: #e599ff;
-            box-shadow: 0 0 10px rgba(209,117,255,0.9);
-        }
-
-    .btn-book-neon { /* زر الحجز الجديد */
-        background-color: #39ff14; /* Neon Green */
-        border-color: #39ff14;
-        color: #1a1625 !important;
-        font-weight: bold;
-        border-radius: 6px;
-        padding: 8px 20px;
-        transition: all 0.3s ease;
-    }
-
-        .btn-book-neon:hover {
-            background-color: #66ff66;
-            border-color: #66ff66;
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.8);
-        }
-
-    /* ----------------------------------------------------- */
-    /* V. Pagination Styling */
-    /* ----------------------------------------------------- */
-
-    .pagination-neon {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 0 10px rgba(106, 13, 173, 0.4);
-    }
-
-    .page-item .page-link {
-        background-color: #1a1625;
-        border: 1px solid #3b3054;
-        color: #f0f0f0;
-        transition: all 0.3s ease;
-        padding: 10px 15px;
-    }
-
-        /* Hover state */
-        .page-item .page-link:hover:not(.active .page-link) {
-            background-color: #2b263b;
-            border-color: #d175ff;
-            color: #d175ff;
-            box-shadow: 0 0 10px rgba(209, 117, 255, 0.4);
-        }
-
-    /* Active state */
-    .page-item.active .page-link {
-        background-color: #6a0dad !important;
-        border-color: #d175ff !important;
-        color: #ffffff !important;
-        box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
-        font-weight: bold;
-    }
-
-    /* Disabled state */
-    .page-item.disabled .page-link {
-        background-color: #0d0a17;
-        border-color: #1a1625;
-        color: #666666;
-        pointer-events: none;
-    }
-</style>
+</body>
+</html>

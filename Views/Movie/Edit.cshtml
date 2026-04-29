@@ -2,231 +2,173 @@
 @using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
-    ViewData["Title"] = "Edit Movie";
+    Layout = null;
 }
 
-<h2 class="mb-4 text-center">✏ Edit Movie</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Edit Movie</title>
 
-<form asp-action="Edit" method="post" enctype="multipart/form-data">
-    <input type="hidden" asp-for="Id" />
-
-    <div class="mb-3">
-        <label asp-for="Title" class="form-label">Title</label>
-        <input asp-for="Title" class="form-control" placeholder="Enter movie title" />
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label">Description</label>
-        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter movie description"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Current Poster</label><br />
-        @if (!string.IsNullOrEmpty(Model.ImageURL))
-        {
-            <img src="@Model.ImageURL" alt="Movie Poster" width="150" class="rounded shadow-sm" />
+    <style>
+        body {
+            background-color: #0d0a17;
+            color: #f0f0f0;
+            font-family: Arial;
+            padding: 20px;
         }
-        else
-        {
-            <p class="text-muted">No image uploaded</p>
+
+        h2 {
+            text-align: center;
+            color: #d175ff;
+            text-shadow: 0 0 10px rgba(209,117,255,0.8);
+            margin-bottom: 20px;
         }
-    </div>
 
-    <div class="mb-3">
-        <label class="form-label">Upload New Poster (optional)</label>
-        <input type="file" name="ImageFile" class="form-control" accept="image/*" />
-        <small class="text-muted">Upload a new movie poster (jpg, png...)</small>
-    </div>
+        form {
+            max-width: 650px;
+            margin: auto;
+            padding: 25px;
+            background: #1a1625;
+            border: 1px solid #6a0dad;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(106,13,173,0.6);
+        }
 
-    <div class="mb-3">
-        <label class="form-label">Category</label>
-        <select asp-for="CategoryId" class="form-select"
-                asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name", Model.CategoryId))">
-            <option value="">-- Select Category --</option>
-        </select>
-        <span asp-validation-for="CategoryId" class="text-danger"></span>
-    </div>
+        .form-label {
+            color: #d175ff;
+            font-weight: bold;
+        }
 
-    <div class="mb-3">
-        <label class="form-label">Cinema</label>
-        <select asp-for="CinemaId" class="form-select"
-                asp-items="@(new SelectList(ViewBag.Cinemas, "Id", "Name", Model.CinemaId))">
-            <option value="">-- Select Cinema --</option>
-        </select>
-        <span asp-validation-for="CinemaId" class="text-danger"></span>
-    </div>
+        .form-control, .form-select {
+            background: #2b263b;
+            border: 1px solid #6a0dad;
+            color: white;
+            border-radius: 8px;
+        }
 
-    <div class="form-group mb-3">
-        <label asp-for="Price" class="form-label fw-bold">Price</label>
-        <input asp-for="Price" class="form-control" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Actors</label>
-        <select name="selectedActors" class="form-select" multiple size="5">
-            @foreach (var actor in ViewBag.Actors as List<movie_hospital_1.dataModel.Actor>)
-            {
-                var isSelected = Model.MovieActors?.Any(ma => ma.ActorId == actor.Id) ?? false;
-                <option value="@actor.Id" selected="@(isSelected ? "selected" : null)">
-                    @actor.Name
-                </option>
+            .form-control:focus, .form-select:focus {
+                border-color: #d175ff;
+                box-shadow: 0 0 10px rgba(209,117,255,0.8);
+                background: #3f3952;
+                color: white;
             }
-        </select>
-        <small class="text-muted">Hold Ctrl (or Cmd) to select multiple actors.</small>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Status</label>
-        <div class="form-check">
-            <input asp-for="InCinema" class="form-check-input" type="checkbox" />
-            <label class="form-check-label" for="InCinema">Active (Showing in Cinema)</label>
+
+        img {
+            border-radius: 8px;
+            border: 3px solid #d175ff;
+            box-shadow: 0 0 10px rgba(209,117,255,0.5);
+            width: 150px;
+        }
+
+        .btn-success {
+            background: #6a0dad;
+            border: none;
+            margin-right: 10px;
+        }
+
+            .btn-success:hover {
+                background: #9333ea;
+                box-shadow: 0 0 15px rgba(209,117,255,0.8);
+            }
+
+        .btn-secondary {
+            background: #3b3054;
+            border: none;
+        }
+
+            .btn-secondary:hover {
+                background: #4c406b;
+            }
+
+        .text-danger {
+            color: #ff6666 !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>✏ Edit Movie</h2>
+
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
         </div>
-    <button type="submit" class="btn btn-success">💾 Save Changes</button>
-    <a asp-action="Index" class="btn btn-secondary">⬅ Back to List</a>
-</form>
 
-@section Scripts {
-    @await Html.PartialAsync("_ValidationScriptsPartial")
-}
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
 
+        <div class="mb-3">
+            <label class="form-label">Current Poster</label><br />
+            @if (!string.IsNullOrEmpty(Model.ImageURL))
+            {
+                <img src="@Model.ImageURL" />
+            }
+            else
+            {
+                <p>No image uploaded</p>
+            }
+        </div>
 
-        <style>
-    /* General Body Styling (Consistency) */
-    body {
-        background-color: #0d0a17;
-        color: #f0f0f0;
-        font-family: 'Arial', sans-serif;
-        padding: 20px;
-    }
+        <div class="mb-3">
+            <label class="form-label">New Poster</label>
+            <input type="file" name="ImageFile" class="form-control" />
+        </div>
 
-    /* Page Heading Styling */
-    h2.mb-4.text-center {
-        color: #d175ff; /* Bright purple/magenta for the main heading */
-        text-shadow: 0 0 10px rgba(209, 117, 255, 0.8);
-        margin-bottom: 30px !important;
-    }
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select asp-for="CategoryId" class="form-select"
+                    asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name", Model.CategoryId))">
+                <option value="">Select Category</option>
+            </select>
+        </div>
 
-    /* Form Container Styling */
-    form {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 30px;
-        background-color: #1a1625; /* Dark background for the form area */
-        border: 1px solid #6a0dad;
-        border-radius: 12px;
-        box-shadow: 0 0 20px rgba(106, 13, 173, 0.7), 0 0 5px rgba(106, 13, 173, 0.5); /* Neon glow */
-    }
+        <div class="mb-3">
+            <label class="form-label">Cinema</label>
+            <select asp-for="CinemaId" class="form-select"
+                    asp-items="@(new SelectList(ViewBag.Cinemas, "Id", "Name", Model.CinemaId))">
+                <option value="">Select Cinema</option>
+            </select>
+        </div>
 
-    /* Label Styling */
-    .form-label,
-    label {
-        color: #d175ff; /* Bright purple for labels */
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
+        <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input asp-for="Price" class="form-control" />
+        </div>
 
-    /* Input/Textarea/File/Select Field Styling */
-    .form-control,
-    .form-select {
-        background-color: #2b263b;
-        border: 1px solid #6a0dad;
-        color: #ffffff;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-        /* Custom select arrow styling */
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23d175ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        background-size: 16px 12px;
-    }
+        <div class="mb-3">
+            <label class="form-label">Actors</label>
+            <select name="selectedActors" class="form-select" multiple size="5">
+                @foreach (var actor in ViewBag.Actors as List<movie_hospital_1.dataModel.Actor>)
+                {
+                    var isSelected = Model.MovieActors?.Any(ma => ma.ActorId == actor.Id) ?? false;
+                    <option value="@actor.Id" selected="@(isSelected ? "selected" : null)">
+                        @actor.Name
+                    </option>
+                }
+            </select>
+        </div>
 
-        /* Focus State */
-        .form-control:focus,
-        .form-select:focus {
-            background-color: #3f3952;
-            border-color: #d175ff;
-            box-shadow: 0 0 8px rgba(209, 117, 255, 0.9);
-            color: #ffffff;
-            outline: none;
-        }
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <div>
+                <input asp-for="InCinema" type="checkbox" />
+                <label>Active</label>
+            </div>
+        </div>
 
-    /* Current Poster Image Styling */
-    form img.rounded.shadow-sm {
-        /* Targeting the image inside the form */
-        border-radius: 5px !important;
-        border: 3px solid #d175ff; /* Bright Neon frame */
-        box-shadow: 0 0 10px rgba(209, 117, 255, 0.5);
-        display: block;
-        margin-bottom: 10px;
-        height: auto; /* Allow auto height based on width=150 */
-        max-width: 150px;
-    }
+        <button type="submit" class="btn btn-success">💾 Save Changes</button>
+        <a asp-action="Index" class="btn btn-secondary">⬅ Back</a>
+    </form>
 
-    /* Muted Text */
-    small.text-muted,
-    p.text-muted {
-        color: #9333ea !important;
-        font-size: 0.9rem;
-    }
-
-    /* Checkbox (Status) Styling */
-    .form-check-input {
-        background-color: #2b263b;
-        border: 2px solid #6a0dad;
-    }
-
-        .form-check-input:checked {
-            background-color: #d175ff;
-            border-color: #d175ff;
-            box-shadow: 0 0 5px rgba(209, 117, 255, 0.8);
-        }
-
-    .form-check-label {
-        color: #f0f0f0;
-        font-weight: normal;
-    }
-
-    /* Validation Text Styling */
-    .text-danger {
-        color: #ff6666 !important;
-        font-weight: bold;
-    }
-
-    /* Save Changes Button (btn-success) - Primary Purple */
-    .btn-success {
-        background-color: #6a0dad;
-        border-color: #6a0dad;
-        color: #ffffff;
-        font-weight: bold;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        margin-right: 10px;
-    }
-
-        .btn-success:hover {
-            background-color: #9333ea;
-            border-color: #9333ea;
-            box-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
-        }
-
-    /* Back Button (btn-secondary) */
-    .btn-secondary {
-        background-color: #3b3054;
-        border-color: #3b3054;
-        color: #f0f0f0;
-        font-weight: 500;
-        border-radius: 8px;
-    }
-
-        .btn-secondary:hover {
-            background-color: #4c406b;
-            border-color: #4c406b;
-        }
-        </style>
+</body>
+</html>

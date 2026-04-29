@@ -6,12 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using movie_hospital_1.dataAccess;
 using movie_hospital_1.dataModel;
 using movie_hospital_1.Reposotories;
-using movie_hospital_1.Utilities;
 using System.Linq.Expressions;
 
 namespace movie_hospital_1.Controllers
 {
-    [Authorize(Roles = $"{SD.ROLE_ADMIN},{SD.ROLE_SUPER_ADMIN}")]
     public class MovieController : Controller
     {
         private readonly ApplicationDbContext _context;

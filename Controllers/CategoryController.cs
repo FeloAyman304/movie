@@ -2,14 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using movie_hospital_1.dataModel;
 using movie_hospital_1.Reposotories.IReposotories;
-using movie_hospital_1.Utilities;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace movie_hospital_1.Controllers
 {
-    [Authorize(Roles = $"{SD.ROLE_ADMIN},{SD.ROLE_SUPER_ADMIN}")]
     public class CategoryController : Controller
     {
         private readonly IRepossitory<Category> _categoryRepository;
