@@ -1,28 +1,26 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using movie_hospital_1.dataModel;
 using movie_hospital_1.Reposotories;
-using System.Security.Claims;
 using System.Linq.Expressions;
-using Microsoft.AspNetCore.Identity;
 
 namespace movie_hospital_1.Controllers
 {
     public class OrdersController : Controller
     {
-        private readonly MovieRepository _MovieRepository;
-        private readonly OrderRepository _OrderRepository;
+        private readonly MovieRepository _movieRepository;
+        private readonly OrderRepository _orderRepository;
 
         public OrdersController(MovieRepository movieRepository, OrderRepository orderRepository)
         {
-            _MovieRepository = movieRepository;
-            _OrderRepository = orderRepository;
+            _movieRepository = movieRepository;
+            _orderRepository = orderRepository;
         }
 
+        // ===================== BOOK PAGE =====================
         [HttpGet]
         public async Task<IActionResult> Book(int movieId, CancellationToken cancellationToken)
         {
-            var movie = await _MovieRepository.GetOne(
+            var movie = await _movieRepository.GetOne(
                 e => e.Id == movieId,
                 includes: new Expression<Func<Movie, object>>[]
                 {
@@ -33,103 +31,92 @@ namespace movie_hospital_1.Controllers
             );
 
             if (movie == null || !movie.InCinema)
-            {
-                TempData["ErrorMessage"] = "The movie is not available for booking.";
-                return RedirectToAction("Index", "Home");
-            }
+                return Redirect("/Home/Index");
 
             return View(movie);
         }
 
+        // ===================== ADD TO CART =====================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Book(int movieId, int quantity = 1, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> AddToCart(int movieId, int quantity = 1)
         {
-            if (quantity <= 0)
+            try
             {
-                TempData["ErrorMessage"] = "Quantity must be greater than zero.";
-                return RedirectToAction(nameof(Book), new { movieId = movieId });
+                // استخدام ID ثابت بدون Login
+                string userId = "guest-user-123";
+
+                var movie = await _movieRepository.GetOne(e => e.Id == movieId);
+
+                if (movie == null)
+                {
+                    return NotFound(new { success = false, message = "Movie not found" });
+                }
+
+                if (!movie.InCinema)
+                {
+                    return BadRequest(new { success = false, message = "Movie is not currently showing" });
+                }
+
+                Order order = new Order()
+                {
+                    MovieId = movieId,
+                    ApplicationUserId = userId,
+                    Quantity = quantity,
+                    TotalPrice = movie.Price * quantity,
+                    OrderDate = DateTime.Now,
+                    OrderStatus = "Completed"
+                };
+
+                await _orderRepository.Add(order);
+                await _orderRepository.Commit();
+
+                return Ok(new { success = true, message = "Added to cart successfully" });
             }
-
-            var movie = await _MovieRepository.GetOne(e => e.Id == movieId, cancellationToken: cancellationToken);
-            if (movie == null)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "The selected movie was not found.";
-                return RedirectToAction("Index", "Home");
+                return StatusCode(500, new { success = false, message = "An error occurred: " + ex.Message });
             }
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
-
-            var order = new Order
-            {
-                MovieId = movieId,
-                ApplicationUserId = userId,
-                Quantity = quantity,
-                TotalPrice = movie.Price * quantity,
-                OrderStatus = "Completed",
-                OrderDate = DateTime.Now
-            };
-
-            await _OrderRepository.Add(order, cancellationToken);
-            await _OrderRepository.Commit(cancellationToken);
-
-            TempData["SuccessMessage"] = $"Your booking for '{movie.Title}' has been placed successfully! Total: {order.TotalPrice.ToString("C")}";
-
-            return RedirectToAction(nameof(UserOrders));
         }
 
-     
-        public async Task<IActionResult> UserOrders(CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> Cart(CancellationToken cancellationToken)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userId = "guest-user-123";
 
-            if (string.IsNullOrEmpty(userId))
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
-
-            var userOrders = await _OrderRepository.GetAsync(
-                        o => o.ApplicationUserId == userId,
-                                     includes: new Expression<Func<Order, object>>[] { o => o.Movie },
+            var orders = await _orderRepository.GetAsync(
+                expression: e => e.ApplicationUserId == userId,
                 cancellationToken: cancellationToken
             );
 
-            return View(userOrders);
-        }
-        // -------------------------------------------------------------
+            foreach (var order in orders)
+            {
+                order.Movie = await _movieRepository.GetOne(
+                    expression: m => m.Id == order.MovieId,
+                    cancellationToken: cancellationToken
+                );
+            }
 
+            return View(orders);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteOrder(int id, CancellationToken cancellationToken)
         {
+            string userId = "guest-user-123";
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
-
-            var order = await _OrderRepository.GetOne(
+            var order = await _orderRepository.GetOne(
                 e => e.Id == id && e.ApplicationUserId == userId,
                 cancellationToken: cancellationToken
             );
 
-            if (order == null)
+            if (order != null)
             {
-                TempData["ErrorMessage"] = "Order not found or you do not have permission to delete it.";
-                return RedirectToAction(nameof(UserOrders));
+                _orderRepository.Delete(order, cancellationToken);
+                await _orderRepository.Commit(cancellationToken);
             }
 
-            _OrderRepository.Delete(order, cancellationToken);
-            await _OrderRepository.Commit(cancellationToken);
-
-            TempData["SuccessMessage"] = "Booking successfully deleted.";
-
-            return RedirectToAction(nameof(UserOrders));
+            return Redirect("/Orders/Cart");
         }
     }
 }

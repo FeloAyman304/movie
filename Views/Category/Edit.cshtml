@@ -109,11 +109,11 @@
                 <div class="d-flex justify-content-between mt-4">
 
                     <a asp-action="Index" class="btn btn-secondary px-4">
-                        ⬅ Back
+                         Back
                     </a>
 
                     <button type="submit" class="btn btn-success px-4">
-                        💾 Save
+                         Save
                     </button>
 
                 </div>
@@ -130,12 +130,10 @@
             const form = document.getElementById("editForm");
             const name = document.getElementById("name");
 
-            // live validation
             name.addEventListener("input", function () {
                 name.style.borderColor = name.value.trim() === "" ? "red" : "#d175ff";
             });
 
-            // confirm update
             form.addEventListener("submit", function (e) {
 
                 if (name.value.trim() === "") {

@@ -1,0 +1,157 @@
+﻿@model IEnumerable<movie_hospital_1.dataModel.Order>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Cart</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #0d0a17;
+            color: white;
+            font-family: Arial;
+        }
+
+        h1 {
+            text-align: center;
+            color: #d175ff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1a1625;
+        }
+
+        th {
+            background: #d175ff;
+            padding: 15px;
+        }
+
+        td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        img {
+            width: 70px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .price {
+            color: gold;
+        }
+
+        button {
+            padding: 10px;
+            background: red;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .total {
+            text-align: right;
+            font-size: 24px;
+            color: #39ff14;
+            margin-top: 20px;
+        }
+
+        .empty {
+            text-align: center;
+            margin-top: 100px;
+            color: gray;
+            font-size: 20px;
+        }
+
+        .debug {
+            background: #333;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <h1> My Cart</h1>
+
+   
+
+    @if (Model != null && Model.Any())
+    {
+        decimal total = 0;
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Movie</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    total += item.TotalPrice;
+                    <tr>
+                        <td>
+                            @if (item.Movie != null)
+                            {
+                                <img src="@item.Movie.ImageURL" alt="@item.Movie.Title" />
+                            }
+                            else
+                            {
+                                <span>No image</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Movie != null)
+                            {
+                                @item.Movie.Title
+                            }
+                            else
+                            {
+                                <span>Movie ID: @item.MovieId (not loaded)</span>
+                            }
+                        </td>
+                        <td>@item.Quantity</td>
+                        <td class="price">@item.TotalPrice.ToString("C")</td>
+                        <td>@item.OrderDate.ToShortDateString()</td>
+                        <td>
+                            <form method="post" asp-action="DeleteOrder" asp-controller="Orders">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="total">
+            Total: @total.ToString("C")
+        </div>
+    }
+    else
+    {
+        <div class="empty">🛍️ Cart Is Empty</div>
+    }
+
+</body>
+</html>

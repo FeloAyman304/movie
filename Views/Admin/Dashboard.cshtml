@@ -4,7 +4,7 @@
 }
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <title>Admin Dashboard</title>
@@ -15,7 +15,7 @@
         body {
             background-color: #0d0a17;
             color: #f0f0f0;
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             padding: 20px;
         }
 
@@ -70,50 +70,52 @@
             padding: 8px 14px;
             border-radius: 8px;
             font-weight: bold;
+            text-decoration: none;
             transition: 0.3s;
         }
 
             .btn-danger-neon:hover {
                 box-shadow: 0 0 15px rgba(255, 77, 77, 0.8);
                 transform: scale(1.05);
+                color: white;
             }
     </style>
 </head>
 
 <body>
 
-    <h2>Welcome to Admin Dashboard</h2>
-
     <div class="logout-btn">
-        <form asp-action="Logout" asp-controller="Account" method="post" id="logoutForm">
-            <button type="submit" class="btn btn-danger-neon">
-                Sign Out 🚪
-            </button>
-        </form>
+        <a href="/Account/Logout" class="btn-danger-neon">Logout</a>
     </div>
+
+    <h2>Welcome to Admin Dashboard</h2>
 
     <ul>
         <li class="nav-item">
-            <a class="nav-link" href="/Category/Index">Category</a>
+            <a class="nav-link" href="/Category/Index">Category Management</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="/Cinema/Index">Cinema</a>
+            <a class="nav-link" href="/Cinema/Index">Cinema Management</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="/Actor/Index">Actor</a>
+            <a class="nav-link" href="/Actor/Index">Actor Management</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="/Movie/Index">Movie</a>
+            <a class="nav-link" href="/Movie/Index">Movie Management</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="/" style="border-color: #00d4ff; color: #00d4ff;">
+                View Website 
+            </a>
         </li>
     </ul>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-
-            // تأثير Hover بسيط على العناصر
             const links = document.querySelectorAll(".nav-link");
 
             links.forEach(link => {
@@ -125,19 +127,6 @@
                     link.style.letterSpacing = "normal";
                 });
             });
-
-            // تأكيد تسجيل الخروج
-            const logoutForm = document.getElementById("logoutForm");
-
-            if (logoutForm) {
-                logoutForm.addEventListener("submit", function (e) {
-                    const ok = confirm("Are you sure you want to logout?");
-                    if (!ok) {
-                        e.preventDefault();
-                    }
-                });
-            }
-
         });
     </script>
 

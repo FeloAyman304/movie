@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace movie_hospital_1.dataModel
 {
@@ -8,25 +9,26 @@ namespace movie_hospital_1.dataModel
         [Key]
         public int Id { get; set; }
 
-        // ربط الحجز بالفيلم
+        [Required]
         public int MovieId { get; set; }
-        [ForeignKey("MovieId")]
-        public Movie Movie { get; set; }
 
-        // ربط الحجز بالمستخدم الذي قام بالحجز
+        [Required]
         public string ApplicationUserId { get; set; }
-        [ForeignKey("ApplicationUserId")]
-        public ApplicationUser ApplicationUser { get; set; }
 
         [Required]
-        public int Quantity { get; set; } = 1;
+        public int Quantity { get; set; }
 
         [Required]
-        [Column(TypeName = "decimal(18, 2)")]
         public decimal TotalPrice { get; set; }
 
-        public DateTime OrderDate { get; set; } = DateTime.Now;
+        [Required]
+        public DateTime OrderDate { get; set; }
 
-        public string OrderStatus { get; set; } = "Pending";
+        [Required]
+        public string OrderStatus { get; set; }
+
+        // Navigation property - لازم تكون Virtual
+        [ForeignKey("MovieId")]
+        public virtual Movie? Movie { get; set; }
     }
 }

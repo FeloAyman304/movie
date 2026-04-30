@@ -1,8 +1,6 @@
 ﻿@model movie_hospital_1.dataModel.Movie
-
 @{
     Layout = null;
-    ViewData["Title"] = "Confirm Booking";
 }
 
 <!DOCTYPE html>
@@ -13,155 +11,157 @@
 
     <style>
         body {
-            background-color: #0d0a17;
-            color: #f0f0f0;
+            margin: 0;
+            background: #0d0a17;
+            color: white;
             font-family: Arial;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .neon-heading {
-            color: #d175ff;
-            text-shadow: 0 0 15px rgba(209, 117, 255, 0.8);
-            text-align: center;
-            margin-top: 30px;
+        .card {
+            width: 900px;
+            background: #1a1625;
+            padding: 30px;
+            border-radius: 20px;
+            display: flex;
+            gap: 30px;
         }
 
-        .booking-card {
-            background-color: #1a1625;
-            border: 2px solid #6a0dad;
-            box-shadow: 0 0 20px rgba(106, 13, 173, 0.5);
+        img {
+            width: 260px;
+            height: 380px;
+            object-fit: cover;
             border-radius: 15px;
-            padding: 20px;
         }
 
-        .booking-image {
-            max-height: 250px;
-            border: 3px solid #d175ff;
-            border-radius: 10px;
-        }
-
-        .neon-title {
-            color: #39ff14;
-            text-shadow: 0 0 8px rgba(57, 255, 20, 0.8);
-        }
-
-        .price-value {
-            color: #ffcc00;
-            font-weight: bold;
-        }
-
-        .quantity-input {
-            background-color: #0d0a17;
-            border: 1px solid #6a0dad;
-            color: white;
-        }
-
-        .neon-submit-btn {
-            background-color: #d175ff;
-            border: none;
-            color: #1a1625;
-            font-weight: bold;
-            padding: 10px;
-            border-radius: 8px;
-            width: 100%;
-        }
-
-            .neon-submit-btn:hover {
-                background-color: #e599ff;
-            }
-
-        #totalPriceDisplay {
-            color: #ffcc00;
-            font-weight: bold;
-        }
-
-        dl dt {
+        h2 {
             color: #d175ff;
         }
 
-        dl dd, p {
+        h3 {
+            color: #39ff14;
+        }
+
+        .price {
+            color: gold;
+            font-size: 22px;
+        }
+
+        input {
+            width: 80px;
+            padding: 8px;
+            margin-left: 10px;
+        }
+
+        button {
+            padding: 12px;
+            margin-top: 15px;
+            width: 100%;
+            background: #d175ff;
+            border: none;
             color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #b55ed9;
+        }
+
+        .back-btn {
+            background: #333;
+            margin-top: 10px;
+        }
+
+        .back-btn:hover {
+            background: #444;
         }
     </style>
 </head>
 
 <body>
 
-    <h2 class="neon-heading">🎟️ Confirm Your Booking</h2>
+    <div class="card">
 
-    <div class="container" style="max-width:900px; margin:auto; margin-top:30px;">
-        <div class="booking-card">
+        <img src="@Model.ImageURL" />
 
-            <div style="display:flex; gap:20px;">
+        <div style="flex:1">
 
-                <div style="width:30%; text-align:center;">
-                    @if (!string.IsNullOrEmpty(Model.ImageURL))
-                    {
-                        <img src="@Model.ImageURL" class="booking-image" />
-                    }
-                    else
-                    {
-                        <div>No Image Available</div>
-                    }
-                </div>
+            <h2>Confirm Booking</h2>
+            <h3>@Model.Title</h3>
 
-                <div style="width:70%;">
+            <p>@Model.Description</p>
 
-                    <h3 class="neon-title">@Model.Title</h3>
-                    <p>@Model.Description</p>
+            <form id="addToCartForm">
+                @Html.AntiForgeryToken()
 
-                    <hr />
+                <input type="hidden" name="movieId" value="@Model.Id" />
 
-                    <dl>
-                        <dt>Category:</dt>
-                        <dd>@Model.Category?.Name</dd>
+                <label>Tickets:</label>
+                <input type="number" id="qty" name="quantity" value="1" min="1" />
 
-                        <dt>Cinema:</dt>
-                        <dd>@Model.Cinema?.Name</dd>
+                <h3 class="price">
+                    Total: $<span id="total">0.00</span>
+                </h3>
 
-                        <dt>Price:</dt>
-                        <dd class="price-value">@Model.Price.ToString("C")</dd>
-                    </dl>
+                <button type="submit">Add To Cart</button>
+            </form>
 
-                    <hr />
-
-                    <form asp-action="Book" asp-controller="Orders" method="post">
-                        <input type="hidden" name="movieId" value="@Model.Id" />
-
-                        <div style="margin-bottom:15px;">
-                            <label>Tickets:</label>
-                            <input type="number" id="quantity" name="quantity"
-                                   value="1" min="1" class="quantity-input" />
-                        </div>
-
-                        <h4>Total: <span id="totalPriceDisplay"></span></h4>
-
-                        <button type="submit" class="neon-submit-btn">
-                            Confirm and Pay
-                        </button>
-                    </form>
-
-                </div>
-            </div>
+            <a href="/Home/Index">
+                <button type="button" class="back-btn">Back</button>
+            </a>
 
         </div>
+
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const price = @Model.Price;
-            const qty = document.getElementById("quantity");
-            const total = document.getElementById("totalPriceDisplay");
+        let price = parseFloat("@Model.Price");
+        let qty = document.getElementById("qty");
+        let totalSpan = document.getElementById("total");
 
-            function update() {
-                const q = parseInt(qty.value) || 1;
-                total.textContent = (price * q).toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'USD'
+        function calc() {
+            let q = parseInt(qty.value) || 1;
+            if (q < 1) qty.value = 1;
+            totalSpan.innerText = (price * q).toFixed(2);
+        }
+
+        qty.addEventListener("input", calc);
+        calc();
+
+        const form = document.getElementById("addToCartForm");
+
+        form.addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/Orders/AddToCart', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
                 });
-            }
 
-            qty.addEventListener("input", update);
-            update();
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(result.message);
+                    window.location.href = '/Orders/Cart';
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
         });
     </script>
 

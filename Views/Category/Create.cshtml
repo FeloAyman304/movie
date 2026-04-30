@@ -85,7 +85,7 @@
 
     <div class="container">
 
-        <h2>➕ Add New Category</h2>
+        <h2>  Add New Category</h2>
 
         <form asp-action="Create" method="post" id="categoryForm">
 
@@ -119,12 +119,10 @@
             const form = document.getElementById("categoryForm");
             const name = document.getElementById("name");
 
-            // live validation
             name.addEventListener("input", function () {
                 name.style.borderColor = name.value.trim() === "" ? "red" : "#d175ff";
             });
 
-            // confirm submit
             form.addEventListener("submit", function (e) {
 
                 if (name.value.trim() === "") {

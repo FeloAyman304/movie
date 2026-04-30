@@ -17,7 +17,6 @@ namespace movie_hospital_1.dataModel
         public bool InCinema { get; set; }
 
         [Required]
-        [Range(0, 1000, ErrorMessage = "السعر لازم يكون بين 0 و 1000")]
         public decimal Price { get; set; }  
 
         public int CategoryId { get; set; }
